@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "731235947713",
+    "project_id": "nyumba-online-26885",
+    "storage_bucket": "nyumba-online-26885.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731235947713:android:ac6f929baf5a7cb6207040",
+        "android_client_info": {
+          "package_name": "com.example.nyumbaonline"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTYkikRa23s3bOhcHdBWZKD3_sGo-z1oc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
