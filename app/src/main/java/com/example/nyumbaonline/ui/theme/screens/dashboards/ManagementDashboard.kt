@@ -198,6 +198,22 @@ fun ManagementDashboard(navController: NavController){
                 }
                 Card(
                     modifier = Modifier.padding(10.dp).clickable {
+                        navController.navigate(ROUTE_VIEW_PROPERTY)
+                    },
+                    shape = RoundedCornerShape(20.dp),
+                    elevation = CardDefaults.cardElevation(10.dp),
+                    colors = CardDefaults.cardColors(Color.LightGray)
+                )
+                {
+                    Box(
+                        modifier = Modifier.height(100.dp)
+                            .padding(25.dp),
+                        contentAlignment = Alignment.Center
+                    )
+                    { Text(text = "View Properties", color = Color.Magenta) }
+                }
+                Card(
+                    modifier = Modifier.padding(10.dp).clickable {
                         navController.navigate(ROUTE_VIEW_CHATROOM) },
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
@@ -210,21 +226,6 @@ fun ManagementDashboard(navController: NavController){
                         contentAlignment = Alignment.Center
                     )
                     { Text(text = "View Chatroom", color = Color.Magenta) }
-                }
-                Card(
-                    modifier = Modifier.padding(10.dp).clickable {
-                        navController.navigate(ROUTE_VIEW_PROPERTY) },
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(10.dp),
-                    colors = CardDefaults.cardColors(Color.LightGray)
-                )
-                {
-                    Box(
-                        modifier = Modifier.height(100.dp)
-                            .padding(25.dp),
-                        contentAlignment = Alignment.Center
-                    )
-                    { Text(text = "View Property", color = Color.Magenta) }
                 }
             }
         }
