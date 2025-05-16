@@ -25,7 +25,7 @@ class TenantViewModel : ViewModel() {
     fun updateTenantDetails(tenantId: String, updatedTenant: TenantModel, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         firestore.collection("tenants")
             .document(tenantId)
-            .set(updatedTenant)
+            .set(updatedTenant.copy(id = tenantId)) // Ensure the ID is preserved
             .addOnSuccessListener { onSuccess() }
             .addOnFailureListener { onFailure(it) }
     }

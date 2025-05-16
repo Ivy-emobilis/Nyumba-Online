@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.nyumbaonline.models.ManagementData
+import com.example.nyumbaonline.models.TenantModel
 import com.example.nyumbaonline.navigation.ROUTE_MANAGEMENT_DASHBOARD
 import com.example.nyumbaonline.navigation.ROUTE_TENANT_DASHBOARD
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,6 +38,9 @@ class AuthViewModel : ViewModel() {
             .get()
             .addOnSuccessListener { documents ->
                 if (!documents.isEmpty) {
+                    val tenantDoc = documents.documents[0]
+                    val tenant = tenantDoc.toObject(TenantModel::class.java)?.copy(id = tenantDoc.id)
+                    navController.currentBackStackEntry?.savedStateHandle?.set("tenant", tenant)
                     navController.navigate(ROUTE_TENANT_DASHBOARD)
                 } else {
                     firestore.collection("managements")

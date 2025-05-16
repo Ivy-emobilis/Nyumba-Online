@@ -30,9 +30,12 @@ fun AppNavHost(
         composable(ROUTE_REGISTER) { Register(navController) }
         composable(ROUTE_LOGIN) { Login(navController) }
         composable(ROUTE_TENANT_DASHBOARD) {
-            val tenant = TenantModel() // Replace with actual tenant data retrieval logic
-            TenantDashboard(navController, tenantViewModel, tenant)
+            val tenant =
+                navController.previousBackStackEntry?.savedStateHandle?.get<TenantModel>("tenant")
+            if (tenant != null) {
+                TenantDashboard(navController, tenantViewModel, tenant)
+            }
         }
-        composable(ROUTE_MANAGEMENT_DASHBOARD) { ManagementDashboard(navController) }
     }
 }
+       

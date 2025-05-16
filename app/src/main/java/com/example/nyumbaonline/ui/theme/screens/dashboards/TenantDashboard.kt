@@ -1,6 +1,6 @@
 package com.example.nyumbaonline.ui.theme.screens.dashboards
 
-// ...existing imports...
+
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,6 +48,8 @@ import com.example.nyumbaonline.navigation.ROUTE_JOIN_CHATROOM
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewModel, tenant: TenantModel) {
+    // Ensure tenant data includes the ID
+    val tenantId = tenant.id
     val context = LocalContext.current
     val showEditDialog = remember { mutableStateOf(false) }
 
@@ -287,3 +289,4 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
 //private fun Tenant_dash_view() {
 //    TenantDashboard(rememberNavController(), TenantViewModel(), TenantModel())
 //}
+
