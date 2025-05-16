@@ -1,196 +1,208 @@
 package com.example.nyumbaonline.ui.theme.screens.dashboards
 
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.Image
+// ...existing imports...
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.nyumbaonline.R
 import com.example.nyumbaonline.navigation.ROUTE_GIVE_REVIEW
 import com.example.nyumbaonline.navigation.ROUTE_JOIN_CHATROOM
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TenantDashboard(navController: NavController){
-    val selectedItem = remember { mutableStateOf(0) }
     val context = LocalContext.current
-    Scaffold (
+    // Nude color palette
+    val nudeBackground = Color(0xFFF5EBDD)
+    val nudeCard = Color(0xFFEADBC8)
+    val nudeText = Color(0xFF7A5C3E)
+    Scaffold  (
         bottomBar = {
-            NavigationBar (containerColor = Color.White){
-                NavigationBarItem(
-                    selected = selectedItem.value == 0,
-                    onClick = {selectedItem.value = 0
-                        val sendIntent = Intent().apply {
-                            action=Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT,"download here: https://www.download.com")
-                            type = "text/plain"
-                        }
-                        val shareIntent = Intent.createChooser(sendIntent,null)
-                        context.startActivity(shareIntent)
-                    },
-                    icon = { Icon(Icons.Filled.Share, contentDescription = "Share")},
-                    label = { Text(text = "Share") },
-                    alwaysShowLabel = true
-                )
-                NavigationBarItem(
-                    selected = selectedItem.value == 1,
-                    onClick = {selectedItem.value = 1
-                        val intent=Intent(Intent.ACTION_DIAL).apply {
-                            data=Uri.parse("tel: 0700000000")
-                        }
-                        context.startActivity(intent)
-                    },
-                    icon = { Icon(Icons.Filled.Phone, contentDescription = "Phone")},
-                    label = { Text(text = "Phone") },
-                    alwaysShowLabel = true
-                )
-                NavigationBarItem(
-                    selected = selectedItem.value == 2,
-                    onClick = {selectedItem.value = 2
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:info@nyumbaonline.com")
-                            putExtra(Intent.EXTRA_SUBJECT,"Inquiry")
-                            putExtra(Intent.EXTRA_TEXT,"Hello, I would like to meet you.Please help")
-                        }
-                        context.startActivity(intent)
-                    },
-                    icon = { Icon(Icons.Filled.Email, contentDescription = "Email")},
-                    label = { Text(text = "Email") },
-                    alwaysShowLabel = true
-                )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(56.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                // Bottom bar with nude background and copyright text
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .height(56.dp)
+                        .padding(bottom = 0.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "nyumbaonline@2025",
+                        color = nudeText,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     )
     { innerPadding ->
-
-
-        Box() {
-            Image(
-                painter = painterResource(id = R.drawable.background),
-                contentDescription = "background image",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(nudeBackground)
         ) {
-            TopAppBar(
-                title = { Text(text = "Nyumba Online") },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Filled.Home,
-                            contentDescription = "Home"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Filled.Person,
-                            contentDescription = "Profile"
-                        )
-                    }
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search"
-                        )
-                    }
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Logout"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color.Gray,
-                    navigationIconContentColor = Color.Gray,
-                    actionIconContentColor = Color.Gray
-                )
-            )
-            Row(modifier = Modifier.wrapContentWidth()) {
-                Card(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .clickable {
-                            navController.navigate(ROUTE_JOIN_CHATROOM)
-                        },
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(10.dp),
-                    colors = CardDefaults.cardColors(Color.LightGray)
-                )
-                {
-                    Box(
-                        modifier = Modifier
-                            .height(100.dp)
-                            .padding(25.dp),
-                        contentAlignment = Alignment.Center
+            Column (
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 0.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TopAppBar(
+                    title = { Text(text = "nyumba online", color = nudeText, fontWeight = FontWeight.Bold) },
+                    actions = {
+                        IconButton(onClick = { /* TODO: Search action */ }) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search",
+                                tint = nudeText
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = nudeCard,
+                        titleContentColor = nudeText,
+                        actionIconContentColor = nudeText
                     )
-                    { Text(text = "Join Chatroom", color = Color.Magenta) }
-                }
-                Card(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .clickable {
-                            navController.navigate(ROUTE_GIVE_REVIEW)
-                        },
-                    shape = RoundedCornerShape(20.dp),
-                    elevation = CardDefaults.cardElevation(10.dp),
-                    colors = CardDefaults.cardColors(Color.LightGray)
                 )
-                {
-                    Box(
-                        modifier = Modifier
-                            .height(100.dp)
-                            .padding(25.dp),
-                        contentAlignment = Alignment.Center
-                    )
-                    { Text(text = "Give Review", color = Color.Magenta) }
+                // 5 Cards in 2 rows (3 + 2)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 32.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        // Open Chatroom
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(120.dp)
+                                .clickable { navController.navigate(ROUTE_JOIN_CHATROOM) },
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(nudeCard)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("Open Chatroom", color = nudeText, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                        // Management Details
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(120.dp)
+                                .clickable { /* TODO: Navigate to management details */ },
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(nudeCard)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("Management Details", color = nudeText, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                        // Review
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(120.dp)
+                                .clickable { navController.navigate(ROUTE_GIVE_REVIEW) },
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(nudeCard)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("Review", color = nudeText, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        // Edit Profile
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(120.dp)
+                                .clickable { /* TODO: Navigate to edit profile */ },
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(nudeCard)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("Edit Profile", color = nudeText, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                        // Logout
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(120.dp)
+                                .clickable { /* TODO: Logout action */ },
+                            shape = RoundedCornerShape(20.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            colors = CardDefaults.cardColors(nudeCard)
+                        ) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                Text("Logout", color = nudeText, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                        // Empty space to balance the row
+                        Box(modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }
@@ -201,5 +213,4 @@ fun TenantDashboard(navController: NavController){
 @Composable
 private fun Tenant_dash_view() {
     TenantDashboard(rememberNavController())
-
 }
