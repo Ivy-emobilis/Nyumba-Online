@@ -155,30 +155,38 @@ fun TenantDashboard(navController: NavController){
             )
             Row(modifier = Modifier.wrapContentWidth()) {
                 Card(
-                    modifier = Modifier.padding(10.dp).clickable {
-                        navController.navigate(ROUTE_JOIN_CHATROOM) },
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .clickable {
+                            navController.navigate(ROUTE_JOIN_CHATROOM)
+                        },
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
                     colors = CardDefaults.cardColors(Color.LightGray)
                 )
                 {
                     Box(
-                        modifier = Modifier.height(100.dp)
+                        modifier = Modifier
+                            .height(100.dp)
                             .padding(25.dp),
                         contentAlignment = Alignment.Center
                     )
                     { Text(text = "Join Chatroom", color = Color.Magenta) }
                 }
                 Card(
-                    modifier = Modifier.padding(10.dp).clickable {
-                        navController.navigate(ROUTE_GIVE_REVIEW) },
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .clickable {
+                            navController.navigate(ROUTE_GIVE_REVIEW)
+                        },
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
                     colors = CardDefaults.cardColors(Color.LightGray)
                 )
                 {
                     Box(
-                        modifier = Modifier.height(100.dp)
+                        modifier = Modifier
+                            .height(100.dp)
                             .padding(25.dp),
                         contentAlignment = Alignment.Center
                     )
@@ -188,8 +196,10 @@ fun TenantDashboard(navController: NavController){
         }
     }
 }
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun DashboardScreenPreview(){
- //   TenantDashboardScreen(rememberNavController())
-//}
+
+@Preview
+@Composable
+private fun Tenant_dash_view() {
+    TenantDashboard(rememberNavController())
+
+}
