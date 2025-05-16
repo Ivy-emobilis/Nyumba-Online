@@ -1,6 +1,7 @@
 package com.example.nyumbaonline.ui.theme.screens.dashboards
 
 // ...existing imports...
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,9 +23,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,13 +40,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.nyumbaonline.data.TenantViewModel
+import com.example.nyumbaonline.models.TenantModel
 import com.example.nyumbaonline.navigation.ROUTE_GIVE_REVIEW
 import com.example.nyumbaonline.navigation.ROUTE_JOIN_CHATROOM
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TenantDashboard(navController: NavController){
+fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewModel, tenant: TenantModel) {
     val context = LocalContext.current
+    val showEditDialog = remember { mutableStateOf(false) }
+
     // Nude color palette
     val nudeBackground = Color(0xFFF5EBDD)
     val nudeCard = Color(0xFFEADBC8)
@@ -171,7 +183,7 @@ fun TenantDashboard(navController: NavController){
                             modifier = Modifier
                                 .weight(1f)
                                 .height(120.dp)
-                                .clickable { /* TODO: Navigate to edit profile */ },
+                                .clickable { showEditDialog.value = true },
                             shape = RoundedCornerShape(20.dp),
                             elevation = CardDefaults.cardElevation(8.dp),
                             colors = CardDefaults.cardColors(nudeCard)
@@ -207,10 +219,71 @@ fun TenantDashboard(navController: NavController){
             }
         }
     }
+
+    // Edit Profile Popup
+    if (showEditDialog.value) {
+        var firstName by remember { mutableStateOf(tenant.firstName) }
+        var lastName by remember { mutableStateOf(tenant.lastName) }
+        var phoneNumber by remember { mutableStateOf(tenant.phoneNumber) }
+        var idNumber by remember { mutableStateOf(tenant.idNumber) }
+        var county by remember { mutableStateOf(tenant.county) }
+        var estate by remember { mutableStateOf(tenant.estate) }
+        var houseNumber by remember { mutableStateOf(tenant.houseNumber) }
+        var password by remember { mutableStateOf(tenant.password) }
+
+        AlertDialog(
+            onDismissRequest = { showEditDialog.value = false },
+            title = { Text("Edit Profile") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextField(value = firstName, onValueChange = { firstName = it }, label = { Text("First Name") })
+                    TextField(value = lastName, onValueChange = { lastName = it }, label = { Text("Last Name") })
+                    TextField(value = phoneNumber, onValueChange = { phoneNumber = it }, label = { Text("Phone Number") })
+                    TextField(value = idNumber, onValueChange = { idNumber = it }, label = { Text("ID Number") })
+                    TextField(value = county, onValueChange = { county = it }, label = { Text("County") })
+                    TextField(value = estate, onValueChange = { estate = it }, label = { Text("Estate") })
+                    TextField(value = houseNumber, onValueChange = { houseNumber = it }, label = { Text("House Number") })
+                    TextField(value = password, onValueChange = { password = it }, label = { Text("Password") })
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    val updatedTenant = tenant.copy(
+                        firstName = firstName,
+                        lastName = lastName,
+                        phoneNumber = phoneNumber,
+                        idNumber = idNumber,
+                        county = county,
+                        estate = estate,
+                        houseNumber = houseNumber,
+                        password = password
+                    )
+                    tenantViewModel.updateTenantDetails(
+                        tenantId = tenant.id, // Assuming `id` is a unique identifier in TenantModel
+                        updatedTenant = updatedTenant,
+                        onSuccess = {
+                            Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                            showEditDialog.value = false
+                        },
+                        onFailure = {
+                            Toast.makeText(context, "Failed to update profile: ${it.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showEditDialog.value = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
 }
 
-@Preview
-@Composable
-private fun Tenant_dash_view() {
-    TenantDashboard(rememberNavController())
-}
+//@Preview
+//@Composable
+//private fun Tenant_dash_view() {
+//    TenantDashboard(rememberNavController(), TenantViewModel(), TenantModel())
+//}
