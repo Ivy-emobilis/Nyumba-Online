@@ -43,11 +43,11 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.nyumbaonline.data.ManagementViewModel
 import com.example.nyumbaonline.models.TenantModel
-import com.example.nyumbaonline.navigation.ROUTE_UPDATE_TENANT
+import com.example.nyumbaonline.navigation.ROUTE_UPDATE_PROPERTY
 
 
 @Composable
-fun ViewStudents(navController: NavHostController){
+fun ViewProperty(navController: NavHostController){
     val context = LocalContext.current
     val TenantRepository = ManagementViewModel()
     val emptyUploadState = remember {
