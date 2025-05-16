@@ -12,6 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.example.nyumbaonline"
         minSdk = 24
+        //noinspection OldTargetApi
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -52,7 +53,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(libs.androidx.navigation.compose.jvmstubs)
+//    implementation(libs.androidx.navigation.compose.jvmstubs)
     implementation(libs.androidx.appcompat)
     implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)

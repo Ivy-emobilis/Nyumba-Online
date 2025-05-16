@@ -1,6 +1,7 @@
 package com.example.nyumbaonline.ui.theme.screens.dashboards
 
 
+import TenantModel
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -41,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.nyumbaonline.data.TenantViewModel
-import com.example.nyumbaonline.models.TenantModel
 import com.example.nyumbaonline.navigation.ROUTE_GIVE_REVIEW
 import com.example.nyumbaonline.navigation.ROUTE_JOIN_CHATROOM
 
@@ -57,28 +58,20 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
     val nudeBackground = Color(0xFFF5EBDD)
     val nudeCard = Color(0xFFEADBC8)
     val nudeText = Color(0xFF7A5C3E)
-    Scaffold  (
+    Scaffold(
         bottomBar = {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .height(56.dp),
-                contentAlignment = Alignment.BottomCenter
+                    .fillMaxWidth() // Use fillMaxWidth instead of fillMaxSize
+                    .height(56.dp)
+                    .background(nudeCard),
+                contentAlignment = Alignment.Center
             ) {
-                // Bottom bar with nude background and copyright text
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .height(56.dp)
-                        .padding(bottom = 0.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "nyumbaonline@2025",
-                        color = nudeText,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                Text(
+                    text = "nyumbaonline@2025",
+                    color = nudeText,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     )
@@ -261,7 +254,7 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                         password = password
                     )
                     tenantViewModel.updateTenantDetails(
-                        tenantId = tenant.id, // Assuming `id` is a unique identifier in TenantModel
+                        tenantId = tenant.id.toString(), // Assuming `id` is a unique identifier in TenantModel
                         updatedTenant = updatedTenant,
                         onSuccess = {
                             Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()

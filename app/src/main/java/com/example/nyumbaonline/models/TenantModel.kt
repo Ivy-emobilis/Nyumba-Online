@@ -1,7 +1,5 @@
-package com.example.nyumbaonline.models
-
 data class TenantModel(
-    val id: String = "", // Firestore document ID
+    val id: String? = null, // Make id nullable
     val email: String = "",
     val password: String = "",
     val firstName: String = "",

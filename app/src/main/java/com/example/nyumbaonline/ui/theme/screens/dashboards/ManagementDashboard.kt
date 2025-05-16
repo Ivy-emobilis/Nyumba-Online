@@ -51,24 +51,38 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.nyumbaonline.R
 import com.example.nyumbaonline.navigation.ROUTE_VIEW_TENANTS
-import com.example.nyumbaonline.navigation.ROUTE_VIEW_CHATROOM
 import com.example.nyumbaonline.navigation.ROUTE_VIEW_PROPERTY
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nyumbaonline.models.PropertyData
 import com.example.nyumbaonline.data.PropertyViewModel
+import com.example.nyumbaonline.models.ManagementData
+import com.example.nyumbaonline.navigation.ROUTE_CHAT_ROOM
 import com.example.nyumbaonline.ui.theme.brown
 import com.example.nyumbaonline.ui.theme.saddleBrown
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ManagementDashboard(navController: NavController){
+fun ManagementDashboard(navController: NavController, management: ManagementData) {
+
     val selectedItem = remember { mutableStateOf(0) }
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
     val propertyViewModel: PropertyViewModel = viewModel()
     val scope = rememberCoroutineScope()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Welcome, ${management.fullname}")
+        Text(text = "Email: ${management.email}")
+        Text(text = "Company: ${management.company}")
+        // Add more fields as needed
+    }
 
     if (showDialog.value) {
         AddPropertyDialog(
@@ -214,7 +228,7 @@ fun ManagementDashboard(navController: NavController){
                 }
                 Card(
                     modifier = Modifier.padding(10.dp).clickable {
-                        navController.navigate(ROUTE_VIEW_CHATROOM) },
+                        navController.navigate(ROUTE_CHAT_ROOM) },
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
                     colors = CardDefaults.cardColors(Color.LightGray)
@@ -299,8 +313,8 @@ fun AddPropertyDialog(onDismiss: () -> Unit, onSave: (PropertyData) -> Unit) {
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun DashboardScreenPreview(){
-    ManagementDashboard(rememberNavController())
-}
+//@Preview(showBackground = true, showSystemUi = true)
+//@Composable
+//fun DashboardScreenPreview(){
+//    ManagementDashboard(rememberNavController())
+//}

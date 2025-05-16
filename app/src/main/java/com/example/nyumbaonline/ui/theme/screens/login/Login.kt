@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,6 +79,7 @@ fun Login(navController: NavController) {
             onValueChange = { newPassword -> password = newPassword },
             label = { Text(text = "Enter Password") },
             placeholder = { Text(text = "Please enter password") },
+            visualTransformation = PasswordVisualTransformation(), // Obscure password input
             modifier = Modifier
                 .wrapContentWidth()
                 .align(Alignment.CenterHorizontally)

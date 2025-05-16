@@ -1,7 +1,7 @@
 package com.example.nyumbaonline.data
 
+import TenantModel
 import androidx.lifecycle.ViewModel
-import com.example.nyumbaonline.models.TenantModel
 import com.google.firebase.firestore.FirebaseFirestore
 
 class TenantViewModel : ViewModel() {
@@ -27,6 +27,16 @@ class TenantViewModel : ViewModel() {
             .document(tenantId)
             .set(updatedTenant.copy(id = tenantId)) // Ensure the ID is preserved
             .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+    fun fetchTenants(onSuccess: (List<TenantModel>) -> Unit, onFailure: (Exception) -> Unit) {
+        firestore.collection("tenants")
+            .get()
+            .addOnSuccessListener { result ->
+                val tenants = result.documents.mapNotNull { it.toObject(TenantModel::class.java)?.copy(id = it.id) }
+                onSuccess(tenants)
+            }
             .addOnFailureListener { onFailure(it) }
     }
 }
