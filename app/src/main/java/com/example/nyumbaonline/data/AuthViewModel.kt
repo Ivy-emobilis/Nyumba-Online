@@ -1,5 +1,6 @@
 package com.example.nyumbaonline.data
 
+import TenantModel
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
@@ -16,6 +17,8 @@ import kotlin.text.set
 class AuthViewModel : ViewModel() {
     private val firestore = FirebaseFirestore.getInstance()
 
+    // src/main/java/com/example/nyumbaonline/data/AuthViewModel.kt
+
     fun registerManagement(
         managementData: ManagementData,
         navController: NavController,
@@ -25,6 +28,7 @@ class AuthViewModel : ViewModel() {
             .add(managementData)
             .addOnSuccessListener {
                 Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
+                navController.currentBackStackEntry?.savedStateHandle?.set("management", managementData)
                 navController.navigate(ROUTE_MANAGEMENT_DASHBOARD) {
                     popUpTo(ROUTE_MANAGEMENT_DASHBOARD) { inclusive = true }
                 }
