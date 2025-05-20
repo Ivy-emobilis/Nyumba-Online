@@ -56,7 +56,7 @@ fun PropertyScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                // Handle property click, e.g., navigate to detail
+                                navController.navigate("PropertyDashboard/${property.id}")
                             },
                         colors = CardDefaults.cardColors(containerColor = brown),
                         elevation = CardDefaults.cardElevation(6.dp)

@@ -15,6 +15,8 @@ import com.example.nyumbaonline.data.TenantViewModel
 import com.example.nyumbaonline.models.ManagementData
 import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatRoom
 import com.example.nyumbaonline.ui.theme.screens.PropertyScreen
+import com.example.nyumbaonline.ui.theme.screens.dashboards.PropertyDashboard
+import com.example.nyumbaonline.ui.theme.screens.Tenants.ViewTenants
 import kotlin.text.get
 
 @Composable
@@ -56,6 +58,13 @@ fun AppNavHost(
                 ManagementDashboard(navController, management)
             }
         }
+        composable("PropertyDashboard/{propertyId}") { backStackEntry ->
+            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+            PropertyDashboard(navController, propertyId)
+        }
+        composable("ViewTenants/{propertyId}") { backStackEntry ->
+            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+            ViewTenants(navController = navController, tenantViewModel = tenantViewModel)
+        }
     }
 }
-
