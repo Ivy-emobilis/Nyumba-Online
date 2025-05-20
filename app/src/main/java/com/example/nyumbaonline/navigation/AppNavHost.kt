@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.nyumbaonline.data.ChatViewModel
+import com.example.nyumbaonline.data.ManagementViewModel
 import com.example.nyumbaonline.ui.theme.screens.SplashScreen
 import com.example.nyumbaonline.ui.theme.screens.dashboards.ManagementDashboard
 import com.example.nyumbaonline.ui.theme.screens.dashboards.TenantDashboard
@@ -99,13 +100,13 @@ fun AppNavHost(
 //        }
             composable(ROUTE_REGISTER) { Register(navController) }
             composable(ROUTE_LOGIN) { Login(navController) }
-            composable(ROUTE_TENANT_DASHBOARD) {
-                val tenant =
-                    navController.previousBackStackEntry?.savedStateHandle?.get<TenantModel>("tenant")
-                if (tenant != null) {
-                    TenantDashboard(navController, tenantViewModel, tenant)
-                }
+        composable(ROUTE_TENANT_DASHBOARD) {
+            val tenant = navController.previousBackStackEntry?.savedStateHandle?.get<TenantModel>("tenant")
+            if (tenant != null) {
+                val managementViewModel: ManagementViewModel = viewModel()
+                TenantDashboard(navController, tenantViewModel, managementViewModel, tenant)
             }
+        }
             composable(
                 route = "${ROUTE_VIEW_PROPERTY}/{managementId}"
             ) { backStackEntry ->
