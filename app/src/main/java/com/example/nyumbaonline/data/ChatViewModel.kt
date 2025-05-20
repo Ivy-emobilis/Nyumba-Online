@@ -161,13 +161,14 @@ class ChatViewModel : ViewModel() {
         }
     }
 
+    // Inside ChatViewModel.kt
     fun sendMessage(content: String, roomId: String) {
         if (content.isBlank() || roomId.isBlank()) return
 
         val newMessage = Message(
             content = content.trim(),
-            sender = currentUserName,
-            senderId = currentUserId,
+            sender = "Anonymous", // Anonymous sender
+            senderId = "", // Hide sender ID
             isFromCurrentUser = true,
             roomId = roomId
         )
@@ -191,9 +192,6 @@ class ChatViewModel : ViewModel() {
                 }
             }
         }
-
-        // Simulate response for demo purposes
-        simulateResponse(roomId)
     }
 
     private fun simulateResponse(roomId: String) {

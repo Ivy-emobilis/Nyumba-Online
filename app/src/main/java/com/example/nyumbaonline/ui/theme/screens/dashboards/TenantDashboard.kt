@@ -123,7 +123,9 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                             modifier = Modifier
                                 .weight(1f)
                                 .height(120.dp)
-                                .clickable { navController.navigate(ROUTE_JOIN_CHATROOM) },
+                                .clickable {
+                                    navController.navigate("chat/${tenant.propertyId}") // Pass propertyId as roomId
+                                },
                             shape = RoundedCornerShape(20.dp),
                             elevation = CardDefaults.cardElevation(8.dp),
                             colors = CardDefaults.cardColors(nudeCard)

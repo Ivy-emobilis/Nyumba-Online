@@ -20,7 +20,6 @@ import com.example.nyumbaonline.ui.theme.screens.register.Register
 import com.example.nyumbaonline.data.TenantViewModel
 import com.example.nyumbaonline.models.ManagementData
 import com.example.nyumbaonline.models.TenantModel
-import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatRoom
 import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatRoomListScreen
 import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatScreen
 import com.example.nyumbaonline.ui.theme.screens.PropertyScreen
