@@ -4,6 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ChatRoom(modifier: Modifier = Modifier) {
+fun ChatRoom(modifier: Modifier = Modifier, id: String, name: String, description: String) {
     
 }
