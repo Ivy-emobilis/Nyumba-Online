@@ -1,6 +1,7 @@
 package com.example.nyumbaonline.models
 
 data class PropertyData(
+    val id: String = "", // Add this field to store the document ID
     val pictureUri: String = "",
     val name: String = "",
     val numberOfUnits: Int = 0,

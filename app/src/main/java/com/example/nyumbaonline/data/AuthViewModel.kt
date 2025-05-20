@@ -26,9 +26,10 @@ class AuthViewModel : ViewModel() {
     ) {
         firestore.collection("managements")
             .add(managementData)
-            .addOnSuccessListener {
+            .addOnSuccessListener { documentRef ->
+                val managementWithId = managementData.copy(id = documentRef.id)
                 Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
-                navController.currentBackStackEntry?.savedStateHandle?.set("management", managementData)
+                navController.currentBackStackEntry?.savedStateHandle?.set("management", managementWithId)
                 navController.navigate(ROUTE_MANAGEMENT_DASHBOARD) {
                     popUpTo(ROUTE_MANAGEMENT_DASHBOARD) { inclusive = true }
                 }
@@ -60,6 +61,7 @@ class AuthViewModel : ViewModel() {
                             if (!managementDocs.isEmpty) {
                                 val managementDoc = managementDocs.documents[0]
                                 val management = managementDoc.toObject(ManagementData::class.java)
+                                    ?.copy(id = managementDoc.id)
                                 navController.currentBackStackEntry?.savedStateHandle?.set(
                                     "management",
                                     management
@@ -77,3 +79,4 @@ class AuthViewModel : ViewModel() {
             }
     }
 }
+
