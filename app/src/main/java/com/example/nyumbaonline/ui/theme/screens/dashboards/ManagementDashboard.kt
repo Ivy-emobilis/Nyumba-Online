@@ -84,8 +84,10 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
         // Add more fields as needed
     }
 
+
     if (showDialog.value) {
         AddPropertyDialog(
+            managementId = management.id ?: "",
             onDismiss = { showDialog.value = false },
             onSave = { propertyData ->
                 scope.launch {
