@@ -1,112 +1,78 @@
 package com.example.nyumbaonline.ui.theme.screens.dashboards
 
 
-
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.nyumbaonline.data.ManagementViewModel
 import com.example.nyumbaonline.data.TenantViewModel
+import com.example.nyumbaonline.models.ManagementData
 import com.example.nyumbaonline.models.TenantModel
-import com.example.nyumbaonline.navigation.ROUTE_GIVE_REVIEW
-import com.example.nyumbaonline.navigation.ROUTE_JOIN_CHATROOM
+import com.example.nyumbaonline.ui.theme.brown
+import com.example.nyumbaonline.ui.theme.saddleBrown
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewModel, tenant: TenantModel) {
-    // Ensure tenant data includes the ID
-    val tenantId = tenant.id
+fun TenantDashboard(
+    navController: NavController,
+    tenantViewModel: TenantViewModel,
+    managementViewModel: ManagementViewModel,
+    tenant: TenantModel
+) {
     val context = LocalContext.current
+    val showManagementDetailsDialog = remember { mutableStateOf(false) }
+    val managementDetails = managementViewModel.getManagementDetails(tenant.propertyId).observeAsState()
+
     val showEditDialog = remember { mutableStateOf(false) }
 
-    // Nude color palette
-    val nudeBackground = Color(0xFFF5EBDD)
-    val nudeCard = Color(0xFFEADBC8)
-    val nudeText = Color(0xFF7A5C3E)
     Scaffold(
         bottomBar = {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth() // Use fillMaxWidth instead of fillMaxSize
+                    .fillMaxWidth()
                     .height(56.dp)
-                    .background(nudeCard),
+                    .background(saddleBrown),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "nyumbaonline@2025",
-                    color = nudeText,
+                    color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
-    )
-    { innerPadding ->
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(nudeBackground)
+                .background(brown)
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TopAppBar(
-                    title = { Text(text = "nyumba online", color = nudeText, fontWeight = FontWeight.Bold) },
-                    actions = {
-                        IconButton(onClick = { /* TODO: Search action */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Search,
-                                contentDescription = "Search",
-                                tint = nudeText
-                            )
-                        }
-                    },
+                    title = { Text(text = "nyumba online", color = Color.White, fontWeight = FontWeight.Bold) },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = nudeCard,
-                        titleContentColor = nudeText,
-                        actionIconContentColor = nudeText
+                        containerColor = saddleBrown,
+                        titleContentColor = Color.White
                     )
                 )
-                // 5 Cards in 2 rows (3 + 2)
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -124,17 +90,16 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                                 .weight(1f)
                                 .height(120.dp)
                                 .clickable {
-                                    navController.navigate("chat/${tenant.propertyId}") // Pass propertyId as roomId
+                                    navController.navigate("chat/${tenant.propertyId}")
                                 },
                             shape = RoundedCornerShape(20.dp),
-                            elevation = CardDefaults.cardElevation(8.dp),
-                            colors = CardDefaults.cardColors(nudeCard)
+                            colors = CardDefaults.cardColors(saddleBrown)
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("Open Chatroom", color = nudeText, fontWeight = FontWeight.Medium)
+                                Text("Open Chatroom", color = Color.White, fontWeight = FontWeight.Medium)
                             }
                         }
                         // Management Details
@@ -142,16 +107,15 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                             modifier = Modifier
                                 .weight(1f)
                                 .height(120.dp)
-                                .clickable { /* TODO: Navigate to management details */ },
+                                .clickable { showManagementDetailsDialog.value = true },
                             shape = RoundedCornerShape(20.dp),
-                            elevation = CardDefaults.cardElevation(8.dp),
-                            colors = CardDefaults.cardColors(nudeCard)
+                            colors = CardDefaults.cardColors(saddleBrown)
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("Management Details", color = nudeText, fontWeight = FontWeight.Medium)
+                                Text("Management Details", color = Color.White, fontWeight = FontWeight.Medium)
                             }
                         }
                         // Review
@@ -159,16 +123,15 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                             modifier = Modifier
                                 .weight(1f)
                                 .height(120.dp)
-                                .clickable { navController.navigate(ROUTE_GIVE_REVIEW) },
+                                .clickable { navController.navigate("give_review") },
                             shape = RoundedCornerShape(20.dp),
-                            elevation = CardDefaults.cardElevation(8.dp),
-                            colors = CardDefaults.cardColors(nudeCard)
+                            colors = CardDefaults.cardColors(saddleBrown)
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("Review", color = nudeText, fontWeight = FontWeight.Medium)
+                                Text("Review", color = Color.White, fontWeight = FontWeight.Medium)
                             }
                         }
                     }
@@ -183,14 +146,13 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                                 .height(120.dp)
                                 .clickable { showEditDialog.value = true },
                             shape = RoundedCornerShape(20.dp),
-                            elevation = CardDefaults.cardElevation(8.dp),
-                            colors = CardDefaults.cardColors(nudeCard)
+                            colors = CardDefaults.cardColors(saddleBrown)
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("Edit Profile", color = nudeText, fontWeight = FontWeight.Medium)
+                                Text("Edit Profile", color = Color.White, fontWeight = FontWeight.Medium)
                             }
                         }
                         // Logout
@@ -200,14 +162,13 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                                 .height(120.dp)
                                 .clickable { /* TODO: Logout action */ },
                             shape = RoundedCornerShape(20.dp),
-                            elevation = CardDefaults.cardElevation(8.dp),
-                            colors = CardDefaults.cardColors(nudeCard)
+                            colors = CardDefaults.cardColors(saddleBrown)
                         ) {
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                Text("Logout", color = nudeText, fontWeight = FontWeight.Medium)
+                                Text("Logout", color = Color.White, fontWeight = FontWeight.Medium)
                             }
                         }
                         // Empty space to balance the row
@@ -218,7 +179,51 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
         }
     }
 
-    // Edit Profile Popup
+    // Management Details Dialog
+    if (showManagementDetailsDialog.value) {
+        Dialog(onDismissRequest = { showManagementDetailsDialog.value = false }) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = saddleBrown,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .background(brown),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Management Details",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    if (managementDetails.value != null) {
+                        val details = managementDetails.value!!
+                        Text("Name: ${details.fullname}", color = Color.White)
+                        Text("Email: ${details.email}", color = Color.White)
+                        Text("Company: ${details.company}", color = Color.White)
+                        Text("Nationality: ${details.nationality}", color = Color.White)
+                        Text("ID No: ${details.idNo}", color = Color.White)
+                        Text("Home County: ${details.homeCounty}", color = Color.White)
+                    } else {
+                        Text("Loading...", color = Color.White)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(
+                        onClick = { showManagementDetailsDialog.value = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                    ) {
+                        Text("Close", color = saddleBrown)
+                    }
+                }
+            }
+        }
+    }
+
+    // Edit Profile Dialog
     if (showEditDialog.value) {
         var firstName by remember { mutableStateOf(tenant.firstName) }
         var lastName by remember { mutableStateOf(tenant.lastName) }
@@ -257,7 +262,7 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
                         password = password
                     )
                     tenantViewModel.updateTenantDetails(
-                        tenantId = tenant.id.toString(), // Assuming `id` is a unique identifier in TenantModel
+                        tenantId = tenant.id.toString(),
                         updatedTenant = updatedTenant,
                         onSuccess = {
                             Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
@@ -279,10 +284,3 @@ fun TenantDashboard(navController: NavController, tenantViewModel: TenantViewMod
         )
     }
 }
-
-//@Preview
-//@Composable
-//private fun Tenant_dash_view() {
-//    TenantDashboard(rememberNavController(), TenantViewModel(), TenantModel())
-//}
-

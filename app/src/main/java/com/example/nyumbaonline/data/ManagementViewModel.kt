@@ -1,12 +1,22 @@
+// In ManagementViewModel.kt
 package com.example.nyumbaonline.data
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import com.example.nyumbaonline.models.ManagementData
 
-//1. Add Tenants
-//2. View Tenants
-//3. Remove Tenants
-//4. Update Tenants
-//5. Add property
-
-class ManagementViewModel {
-
+class ManagementViewModel : ViewModel() {
+    fun getManagementDetails(propertyId: String) = liveData {
+        // Simulate fetching data from a database or API
+        val managementDetails = ManagementData(
+            id = "1",
+            fullname = "John Doe",
+            email = "johndoe@example.com",
+            company = "Doe Properties",
+            nationality = "Kenyan",
+            idNo = "12345678",
+            homeCounty = "Nairobi"
+        )
+        emit(managementDetails) // Replace with actual database query
+    }
 }

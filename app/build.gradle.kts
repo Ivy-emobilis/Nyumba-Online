@@ -69,6 +69,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.compose.runtime:runtime-livedata:1.8.2")
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
     implementation (libs.retrofit)
