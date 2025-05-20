@@ -14,6 +14,7 @@ import com.example.nyumbaonline.ui.theme.screens.register.Register
 import com.example.nyumbaonline.data.TenantViewModel
 import com.example.nyumbaonline.models.ManagementData
 import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatRoom
+import com.example.nyumbaonline.ui.theme.screens.PropertyScreen
 import kotlin.text.get
 
 @Composable
@@ -35,6 +36,14 @@ fun AppNavHost(
         }
         composable(ROUTE_REGISTER) { Register(navController) }
         composable(ROUTE_LOGIN) { Login(navController) }
+// ... inside NavHost { ... }
+                composable(ROUTE_VIEW_PROPERTY) {
+                    val management =
+                        navController.previousBackStackEntry?.savedStateHandle?.get<ManagementData>("management")
+                    if (management != null) {
+                        PropertyScreen(navController, managementId = management.id ?: "")
+                    }
+                }
         composable(ROUTE_TENANT_DASHBOARD) {
             val tenant =
                 navController.previousBackStackEntry?.savedStateHandle?.get<TenantModel>("tenant")

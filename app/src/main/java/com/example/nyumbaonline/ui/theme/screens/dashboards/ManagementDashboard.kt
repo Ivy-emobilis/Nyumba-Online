@@ -296,7 +296,7 @@ fun AddPropertyDialog(onDismiss: () -> Unit, onSave: (PropertyData) -> Unit) {
                             numberOfUnits = numberOfUnits.value.toIntOrNull() ?: 0,
                             address = address.value,
                             description = description.value,
-                            managementId = "managementId_placeholder" // Replace with actual ID
+                            managementId = // Replace with actual ID
                         )
                     )
                 },

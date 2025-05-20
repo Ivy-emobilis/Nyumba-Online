@@ -70,7 +70,7 @@ fun Register(navController: NavController) {
     ) {
         Text(
             text = "Register Here!",
-            fontSize = 40.sp,
+            fontSize = 20.sp,
             fontFamily = FontFamily.SansSerif,
             fontStyle = FontStyle.Italic,
             color = saddleBrown,
@@ -78,7 +78,7 @@ fun Register(navController: NavController) {
             modifier = Modifier
                 .background(Color.LightGray)
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(5.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
         Image(
