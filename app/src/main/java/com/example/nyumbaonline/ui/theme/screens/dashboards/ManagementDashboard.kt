@@ -340,12 +340,13 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
 
                         DashboardActionCard(
                             title = "Chat with Tenants",
-                            description = "Message your tenants directly",
-                            icon = Icons.Outlined.Chat,
-                            backgroundColor = dustyRoseDark
-                        ) {
-                            navController.navigate(ROUTE_CHAT_ROOM_LIST)
-                        }
+                            description = "View messages from tenants",
+                            icon = Icons.Default.Chat,
+                            backgroundColor = dustyRose,
+                            onClick = {
+                                navController.navigate("ChatRoomList/${management.id}")
+                            }
+                        )
                     }
                 }
 
