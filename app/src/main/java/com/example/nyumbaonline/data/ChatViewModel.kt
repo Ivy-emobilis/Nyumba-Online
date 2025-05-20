@@ -1,4 +1,4 @@
-package  com.example.nyumbaonline.data
+package com.example.nyumbaonline.data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nyumbaonline.models.ChatRoom
@@ -40,7 +40,9 @@ class ChatViewModel : ViewModel() {
                 participants = listOf(currentUserId, "agent1", "agent2"),
                 lastMessage = "Are there any 2-bedroom apartments available?",
                 lastMessageTimestamp = System.currentTimeMillis() - 3600000, // 1 hour ago
-                unreadCount = 0
+                unreadCount = 0,
+                propertyId = "property1",
+                managementId = "management1"
             ),
             ChatRoom(
                 id = "room2",
@@ -49,7 +51,9 @@ class ChatViewModel : ViewModel() {
                 participants = listOf(currentUserId, "agent3"),
                 lastMessage = "I'd like to view the property on Saturday",
                 lastMessageTimestamp = System.currentTimeMillis() - 86400000, // 1 day ago
-                unreadCount = 2
+                unreadCount = 2,
+                propertyId = "property2",
+                managementId = "management1"
             ),
             ChatRoom(
                 id = "room3",
@@ -58,7 +62,9 @@ class ChatViewModel : ViewModel() {
                 participants = listOf(currentUserId, "agent4", "agent5"),
                 lastMessage = "What's the minimum lease period?",
                 lastMessageTimestamp = System.currentTimeMillis() - 172800000, // 2 days ago
-                unreadCount = 0
+                unreadCount = 0,
+                propertyId = "property3",
+                managementId = "management2"
             )
         )
         _chatRooms.value = rooms
@@ -161,7 +167,6 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    // Inside ChatViewModel.kt
     fun sendMessage(content: String, roomId: String) {
         if (content.isBlank() || roomId.isBlank()) return
 
@@ -239,8 +244,7 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    // Create a new chat room
-    fun createChatRoom(name: String, description: String, participants: List<String>) {
+    fun createChatRoom(name: String, description: String, participants: List<String>, propertyId: String, managementId: String) {
         val newRoomId = "room${_chatRooms.value.size + 1}"
 
         val newRoom = ChatRoom(
@@ -249,7 +253,9 @@ class ChatViewModel : ViewModel() {
             description = description,
             participants = participants + currentUserId,
             lastMessage = "Chat room created",
-            lastMessageTimestamp = System.currentTimeMillis()
+            lastMessageTimestamp = System.currentTimeMillis(),
+            propertyId = propertyId,
+            managementId = managementId
         )
 
         // Add new room to the list
@@ -270,5 +276,9 @@ class ChatViewModel : ViewModel() {
         _messages.update { currentMessages ->
             currentMessages + (newRoomId to listOf(systemMessage))
         }
+    }
+
+    fun getChatRoomsForManagement(managementId: String): List<ChatRoom> {
+        return _chatRooms.value.filter { it.managementId == managementId }
     }
 }

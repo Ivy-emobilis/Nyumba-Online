@@ -61,6 +61,7 @@ dependencies {
 //    implementation(libs.androidx.navigation.compose.jvmstubs)
     implementation(libs.androidx.appcompat)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.vertexai)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -7,5 +7,7 @@ data class ChatRoom(
     val participants: List<String> = emptyList(),
     val lastMessage: String = "",
     val lastMessageTimestamp: Long = 0L,
-    val unreadCount: Int = 0
+    val unreadCount: Int = 0,
+    val propertyId: String = "", // New field for property association
+    val managementId: String = "" // New field for management association
 )

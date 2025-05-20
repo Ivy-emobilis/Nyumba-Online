@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
+import com.example.nyumbaonline.data.ChatViewModel
 import com.example.nyumbaonline.data.PropertyViewModel
 import com.example.nyumbaonline.models.ManagementData
 import com.example.nyumbaonline.models.PropertyData
@@ -86,12 +87,24 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
 
     val showAddPropertyDialog = remember { mutableStateOf(false) }
     val propertyViewModel = remember { PropertyViewModel() }
+    val chatViewModel = remember { ChatViewModel() }
 
     if (showAddPropertyDialog.value) {
         AddPropertyDialog(
             managementId = management.id.toString(),
             onDismiss = { showAddPropertyDialog.value = false },
-            onPropertyAdded = { showAddPropertyDialog.value = false }
+            onPropertyAdded = { property ->
+                showAddPropertyDialog.value = false
+                // Create a chatroom for the new property
+                chatViewModel.createChatRoom(
+                    name = "${property.name} Chat",
+                    description = "Chatroom for ${property.name}",
+                    participants = listOf("agent1"),
+                    propertyId = property.id,
+                    managementId = management.id.toString()
+                )
+            },
+            propertyViewModel = propertyViewModel
         )
     }
 
@@ -344,7 +357,7 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
                             icon = Icons.Default.Chat,
                             backgroundColor = dustyRose,
                             onClick = {
-                                navController.navigate("ChatRoomList/${management.id}")
+                                navController.navigate("$ROUTE_CHAT_ROOM_LIST/${management.id}")
                             }
                         )
                     }
@@ -677,13 +690,13 @@ fun RecentActivityItem(title: String, description: String, time: String, icon: I
 fun AddPropertyDialog(
     managementId: String,
     onDismiss: () -> Unit,
-    onPropertyAdded: () -> Unit
+    onPropertyAdded: (PropertyData) -> Unit,
+    propertyViewModel: PropertyViewModel
 ) {
     val propertyName = remember { mutableStateOf("") }
     val propertyUnits = remember { mutableStateOf("") }
     val propertyAddress = remember { mutableStateOf("") }
     val propertyDescription = remember { mutableStateOf("") }
-    val propertyViewModel = PropertyViewModel() // Use the correct instance
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -724,7 +737,9 @@ fun AddPropertyDialog(
                 )
                 propertyViewModel.addProperty(
                     propertyData = property,
-                    onSuccess = { onPropertyAdded() },
+                    onSuccess = {
+                        onPropertyAdded(property.copy(id = propertyViewModel.generatePropertyId())) // Assuming PropertyViewModel provides a way to get the new ID
+                    },
                     onFailure = { /* Handle error */ }
                 )
             }) {
@@ -738,4 +753,3 @@ fun AddPropertyDialog(
         }
     )
 }
-

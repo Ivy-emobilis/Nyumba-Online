@@ -25,6 +25,7 @@ import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatScreen
 import com.example.nyumbaonline.ui.theme.screens.PropertyScreen
 import com.example.nyumbaonline.ui.theme.screens.dashboards.PropertyDashboard
 import com.example.nyumbaonline.ui.theme.screens.Tenants.ViewTenants
+import com.google.firebase.vertexai.Chat
 import kotlin.text.get
 
 @Composable
@@ -46,20 +47,17 @@ fun AppNavHost(
 
 
 // Add this to your existing NavHost
-        composable(ROUTE_CHAT_ROOM_LIST) {
-            val chatViewModel: ChatViewModel = viewModel()
-            ChatRoomListScreen(
-                onNavigateToChat = { chatId ->
-                    // Navigate to chat screen with the chatId
-                    navController.navigate("chat/$chatId")
-                },
-                viewModel = chatViewModel
-            )
+        composable(
+            route = "$ROUTE_CHAT_ROOM_LIST/{managementId}",
+            arguments = listOf(navArgument("managementId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val managementId = backStackEntry.arguments?.getString("managementId") ?: ""
+            val chatViewModel: Chat
         }
 
 // If you need to pass data to the ChatRoomListScreen, you can use savedStateHandle
 // For example:
-        /*
+            /*
         composable(ROUTE_CHAT_ROOM_LIST) {
             val chatViewModel: ChatViewModel = viewModel()
             val userData = navController.previousBackStackEntry?.savedStateHandle?.get<UserData>("user_data")
@@ -77,61 +75,62 @@ fun AppNavHost(
 
 // Chat screen composable for individual chat rooms
 
-        composable(
-            route = ROUTE_CHAT_SCREEN,
-            arguments = listOf(
-                navArgument("roomId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val roomId = backStackEntry.arguments?.getString("roomId") ?: ""
-            val chatViewModel: ChatViewModel = viewModel()
+            composable(
+                route = ROUTE_CHAT_SCREEN,
+                arguments = listOf(
+                    navArgument("roomId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val roomId = backStackEntry.arguments?.getString("roomId") ?: ""
+                val chatViewModel: ChatViewModel = viewModel()
 
-            ChatScreen(
-                roomId = roomId,
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                viewModel = chatViewModel,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+                ChatScreen(
+                    roomId = roomId,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    viewModel = chatViewModel,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
 //        composable (ROUTE_CHAT_ROOM){
 //            ChatRoom()
 //        }
-        composable(ROUTE_REGISTER) { Register(navController) }
-        composable(ROUTE_LOGIN) { Login(navController) }
-        composable(ROUTE_TENANT_DASHBOARD) {
-            val tenant =
-                navController.previousBackStackEntry?.savedStateHandle?.get<TenantModel>("tenant")
-            if (tenant != null) {
-                TenantDashboard(navController, tenantViewModel, tenant)
+            composable(ROUTE_REGISTER) { Register(navController) }
+            composable(ROUTE_LOGIN) { Login(navController) }
+            composable(ROUTE_TENANT_DASHBOARD) {
+                val tenant =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<TenantModel>("tenant")
+                if (tenant != null) {
+                    TenantDashboard(navController, tenantViewModel, tenant)
+                }
             }
-        }
-        composable(
-            route = "${ROUTE_VIEW_PROPERTY}/{managementId}"
-        ) { backStackEntry ->
-            val managementId = backStackEntry.arguments?.getString("managementId") ?: ""
-            PropertyScreen(navController = navController, managementId = managementId)
-        }
-        composable(ROUTE_MANAGEMENT_DASHBOARD) {
-            val management =
-                navController.previousBackStackEntry?.savedStateHandle?.get<ManagementData>("management")
-            if (management != null) {
-                ManagementDashboard(navController, management)
+            composable(
+                route = "${ROUTE_VIEW_PROPERTY}/{managementId}"
+            ) { backStackEntry ->
+                val managementId = backStackEntry.arguments?.getString("managementId") ?: ""
+                PropertyScreen(navController = navController, managementId = managementId)
             }
-        }
-        composable("PropertyDashboard/{propertyId}") { backStackEntry ->
-            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
-            PropertyDashboard(navController, propertyId)
-        }
-        composable("ViewTenants/{propertyId}") { backStackEntry ->
-            val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
-            ViewTenants(
-                navController = navController,
-                tenantViewModel = tenantViewModel,
-                propertyId = propertyId // Pass propertyId here
-            )
+            composable(ROUTE_MANAGEMENT_DASHBOARD) {
+                val management =
+                    navController.previousBackStackEntry?.savedStateHandle?.get<ManagementData>("management")
+                if (management != null) {
+                    ManagementDashboard(navController, management)
+                }
+            }
+            composable("PropertyDashboard/{propertyId}") { backStackEntry ->
+                val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+                PropertyDashboard(navController, propertyId)
+            }
+            composable("ViewTenants/{propertyId}") { backStackEntry ->
+                val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
+                ViewTenants(
+                    navController = navController,
+                    tenantViewModel = tenantViewModel,
+                    propertyId = propertyId // Pass propertyId here
+                )
+            }
         }
     }
-}
+

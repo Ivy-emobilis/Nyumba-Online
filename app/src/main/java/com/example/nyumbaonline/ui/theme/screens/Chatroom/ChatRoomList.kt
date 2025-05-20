@@ -17,8 +17,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,19 +36,16 @@ val BorderColor = Color(0xFFE0E0E0) // Light border for input fields
 val IconColor = Color(0xFF6D4C41) // Brown for icons
 val PurpleAccent = Color(0xFFB14DB1) // Retain for FAB consistency
 
-// Custom font family for the handwritten style (you may need to add this to your project resources)
-//val HandwrittenFontFamily = FontFamily(
-//    Font(/* Add your handwritten font resource here, e.g., R.font.snell_roundhand */)
-//)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatRoomListScreen(
+    managementId: String,
     onNavigateToChat: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatViewModel = viewModel()
 ) {
     val chatRooms by viewModel.chatRooms.collectAsState()
+    val filteredChatRooms = chatRooms.filter { it.managementId == managementId }
     var showNewChatDialog by remember { mutableStateOf(false) }
 
     // Updated color scheme to match the image
@@ -84,7 +79,6 @@ fun ChatRoomListScreen(
                 ) {
                     Text(
                         text = "Chatrooms",
-//                        fontFamily = HandwrittenFontFamily, // Handwritten font for heading
                         fontSize = 32.sp, // Larger font size to match the image
                         color = HeadingTextColor,
                         fontWeight = FontWeight.Normal
@@ -105,12 +99,12 @@ fun ChatRoomListScreen(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(chatRooms) { room ->
+                    items(filteredChatRooms) { room ->
                         ChatRoomItem(
                             chatRoom = room,
                             onClick = {
                                 viewModel.selectChatRoom(room.id)
-                                onNavigateToChat(room.id)
+                                onNavigateToChat("${room.id}/true") // Pass readOnly=true
                             }
                         )
                     }
@@ -148,7 +142,9 @@ fun ChatRoomListScreen(
                     viewModel.createChatRoom(
                         name = name,
                         description = description,
-                        participants = listOf("agent1")
+                        participants = listOf("agent1"),
+                        propertyId = "", // Management cannot create property-specific chatrooms here
+                        managementId = managementId
                     )
                     showNewChatDialog = false
                 }
@@ -180,8 +176,7 @@ fun TopBar() {
                     .clip(RoundedCornerShape(8.dp)),
                 color = CardBackground,
                 border = ButtonDefaults.outlinedButtonBorder.copy(
-                    width = 1.dp,
-//                    brush = Brush.solidColor(BorderColor)
+                    width = 1.dp
                 )
             ) {
                 Box(
@@ -216,8 +211,7 @@ fun ChatRoomItem(
         shape = RoundedCornerShape(8.dp), // Match the rounded corners of the input fields
         color = CardBackground,
         border = ButtonDefaults.outlinedButtonBorder.copy(
-            width = 1.dp,
-//            brush = Brush.solidColor(BorderColor)
+            width = 1.dp
         ),
         shadowElevation = 0.dp // No shadow to match the flat design
     ) {
@@ -327,7 +321,6 @@ fun NewChatRoomDialog(
         title = {
             Text(
                 text = "Create New Chatroom",
-//                fontFamily = HandwrittenFontFamily,
                 fontSize = 24.sp,
                 color = HeadingTextColor
             )

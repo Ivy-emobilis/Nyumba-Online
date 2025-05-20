@@ -30,6 +30,7 @@ import java.util.*
 @Composable
 fun ChatScreen(
     roomId: String? = null, // Made nullable to handle chatroom list screen
+    readOnly: Boolean = false, // New parameter for read-only mode
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatViewModel = viewModel(),
@@ -297,25 +298,27 @@ fun ChatScreen(
                         }
                     }
 
-                    // Message input field
-                    ChatInputField(
-                        value = messageText,
-                        onValueChange = { messageText = it },
-                        onSendClick = {
-                            if (messageText.isNotBlank()) {
-                                viewModel.sendMessage(messageText, roomId)
-                                messageText = ""
-                                coroutineScope.launch {
-                                    if (messages.isNotEmpty()) {
-                                        listState.animateScrollToItem(messages.size)
+                    // Message input field (hidden if readOnly)
+                    if (!readOnly) {
+                        ChatInputField(
+                            value = messageText,
+                            onValueChange = { messageText = it },
+                            onSendClick = {
+                                if (messageText.isNotBlank()) {
+                                    viewModel.sendMessage(messageText, roomId)
+                                    messageText = ""
+                                    coroutineScope.launch {
+                                        if (messages.isNotEmpty()) {
+                                            listState.animateScrollToItem(messages.size)
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        )
+                    }
                 }
             }
         }
@@ -479,7 +482,6 @@ fun ChatInputField(
         modifier = modifier,
         shape = RoundedCornerShape(24.dp),
         color = Color.White,
-//        elevation = 2.dp
     ) {
         Row(
             modifier = Modifier
