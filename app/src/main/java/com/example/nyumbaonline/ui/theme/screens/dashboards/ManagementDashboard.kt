@@ -247,9 +247,12 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
         }
     }
 }
-
 @Composable
-fun AddPropertyDialog(onDismiss: () -> Unit, onSave: (PropertyData) -> Unit) {
+fun AddPropertyDialog(
+    managementId: String,
+    onDismiss: () -> Unit,
+    onSave: (PropertyData) -> Unit
+) {
     val pictureUri = remember { mutableStateOf("") }
     val name = remember { mutableStateOf("") }
     val numberOfUnits = remember { mutableStateOf("") }
@@ -298,7 +301,7 @@ fun AddPropertyDialog(onDismiss: () -> Unit, onSave: (PropertyData) -> Unit) {
                             numberOfUnits = numberOfUnits.value.toIntOrNull() ?: 0,
                             address = address.value,
                             description = description.value,
-                            managementId = // Replace with actual ID
+                            managementId = managementId // Use actual management id
                         )
                     )
                 },
@@ -314,6 +317,7 @@ fun AddPropertyDialog(onDismiss: () -> Unit, onSave: (PropertyData) -> Unit) {
         }
     )
 }
+
 
 //@Preview(showBackground = true, showSystemUi = true)
 //@Composable
