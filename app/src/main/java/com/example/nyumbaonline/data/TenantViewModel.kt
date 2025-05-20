@@ -1,7 +1,8 @@
 package com.example.nyumbaonline.data
 
-import TenantModel
+
 import androidx.lifecycle.ViewModel
+import com.example.nyumbaonline.models.TenantModel
 import com.google.firebase.firestore.FirebaseFirestore
 
 // File: app/src/main/java/com/example/nyumbaonline/data/TenantViewModel.kt

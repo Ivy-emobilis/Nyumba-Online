@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -112,7 +113,7 @@ fun ChatScreen(
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack) {
                             Icon(
-                                Icons.Default.ArrowBack,
+                                Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
                                 tint = Color(0xFF8B4513)
                             )
@@ -138,7 +139,7 @@ fun ChatScreen(
                         onClick = {},
                         icon = {
                             Icon(
-                                Icons.Default.Chat,
+                                Icons.Default.ChatBubble,
                                 contentDescription = "Chat",
                                 tint = Color.White
                             )
@@ -344,7 +345,7 @@ fun ChatRoomItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Chat,
+                imageVector = Icons.Default.ChatBubble,
                 contentDescription = "Chat Icon",
                 tint = Color(0xFF8B4513),
                 modifier = Modifier

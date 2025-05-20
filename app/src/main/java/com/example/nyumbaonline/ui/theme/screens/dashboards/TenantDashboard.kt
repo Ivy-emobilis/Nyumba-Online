@@ -1,7 +1,7 @@
 package com.example.nyumbaonline.ui.theme.screens.dashboards
 
 
-import TenantModel
+
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.nyumbaonline.data.TenantViewModel
+import com.example.nyumbaonline.models.TenantModel
 import com.example.nyumbaonline.navigation.ROUTE_GIVE_REVIEW
 import com.example.nyumbaonline.navigation.ROUTE_JOIN_CHATROOM
 

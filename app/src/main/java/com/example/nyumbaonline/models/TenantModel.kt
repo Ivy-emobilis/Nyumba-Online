@@ -1,3 +1,5 @@
+package com.example.nyumbaonline.models
+
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -13,5 +15,6 @@ data class TenantModel(
     val profilePhotoUrl: String = "",
     val county: String = "",
     val estate: String = "",
-    val houseNumber: String = ""
+    val houseNumber: String = "",
+    val propertyId: String = "" // Added propertyId field
 ) : Parcelable

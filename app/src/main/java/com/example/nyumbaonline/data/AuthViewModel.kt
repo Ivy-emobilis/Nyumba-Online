@@ -1,11 +1,12 @@
 package com.example.nyumbaonline.data
 
-import TenantModel
+
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.nyumbaonline.models.ManagementData
+import com.example.nyumbaonline.models.TenantModel
 import com.example.nyumbaonline.navigation.ROUTE_MANAGEMENT_DASHBOARD
 import com.example.nyumbaonline.navigation.ROUTE_TENANT_DASHBOARD
 import com.google.firebase.firestore.FirebaseFirestore

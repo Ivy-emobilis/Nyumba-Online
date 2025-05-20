@@ -2,7 +2,6 @@ package com.example.nyumbaonline.ui.theme.screens.Tenants
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
-import TenantModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nyumbaonline.data.TenantViewModel
+import com.example.nyumbaonline.models.TenantModel
 import com.example.nyumbaonline.ui.theme.burlywood
 import com.example.nyumbaonline.ui.theme.peru
 import com.example.nyumbaonline.ui.theme.sienna
@@ -29,6 +29,7 @@ import com.example.nyumbaonline.ui.theme.tan
 import com.example.nyumbaonline.ui.theme.wheat
 import com.example.nyumbaonline.ui.theme.white
 import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.launch
 
 @Composable
 fun ViewTenants(navController: NavController, tenantViewModel: TenantViewModel, propertyId: String) {
@@ -37,6 +38,8 @@ fun ViewTenants(navController: NavController, tenantViewModel: TenantViewModel, 
     val showAddTenantDialog = remember { mutableStateOf(false) }
     val showDeleteDialog = remember { mutableStateOf<TenantModel?>(null) }
     var listenerRegistration by remember { mutableStateOf<ListenerRegistration?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // Fetch tenants with real-time listener
     fun refreshTenants() {
@@ -47,6 +50,9 @@ fun ViewTenants(navController: NavController, tenantViewModel: TenantViewModel, 
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     isLoading = false
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Failed to fetch tenants: ${error.message}")
+                    }
                     return@addSnapshotListener
                 }
                 if (snapshot != null) {
@@ -75,6 +81,7 @@ fun ViewTenants(navController: NavController, tenantViewModel: TenantViewModel, 
                 Icon(Icons.Filled.Add, contentDescription = "Add Tenant")
             }
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = wheat
     ) { innerPadding ->
         Column(
@@ -166,8 +173,17 @@ fun ViewTenants(navController: NavController, tenantViewModel: TenantViewModel, 
                 )
                 tenantViewModel.addTenant(
                     tenant = newTenant,
-                    onSuccess = { showAddTenantDialog.value = false },
-                    onFailure = { /* Handle failure (e.g., show toast) */ }
+                    onSuccess = {
+                        showAddTenantDialog.value = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Tenant added successfully")
+                        }
+                    },
+                    onFailure = { error ->
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Failed to add tenant: ${error.message}")
+                        }
+                    }
                 )
             }
         )
@@ -188,7 +204,18 @@ fun ViewTenants(navController: NavController, tenantViewModel: TenantViewModel, 
                 TextButton(
                     onClick = {
                         tenant.id?.let { id ->
-                            tenantViewModel.firestore.collection("tenants").document(id).delete()
+                            tenantViewModel.firestore.collection("tenants").document(id)
+                                .delete()
+                                .addOnSuccessListener {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Tenant deleted successfully")
+                                    }
+                                }
+                                .addOnFailureListener { error ->
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar("Failed to delete tenant: ${error.message}")
+                                    }
+                                }
                         }
                         showDeleteDialog.value = null
                     },

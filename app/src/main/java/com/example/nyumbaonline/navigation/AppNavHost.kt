@@ -1,6 +1,6 @@
 package com.example.nyumbaonline.navigation
 
-import TenantModel
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,6 +19,7 @@ import com.example.nyumbaonline.ui.theme.screens.login.Login
 import com.example.nyumbaonline.ui.theme.screens.register.Register
 import com.example.nyumbaonline.data.TenantViewModel
 import com.example.nyumbaonline.models.ManagementData
+import com.example.nyumbaonline.models.TenantModel
 import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatRoom
 import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatRoomListScreen
 import com.example.nyumbaonline.ui.theme.screens.Chatroom.ChatScreen
