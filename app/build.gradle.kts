@@ -73,6 +73,6 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
     implementation (libs.logging.interceptor)
-//    implementation("androidx.compose.material:material-icons-extended:1.6.1")
-    implementation( "androidx.compose.material:material-icons-extended:1.7.8")
+//    implementation(libs.androidx.material.icons.extended)
+    implementation( "androidx.compose.material:material-icons-extended:1.6.1")
 }
