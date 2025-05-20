@@ -1,10 +1,10 @@
-<manifest ...>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.nyumbaonline">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- Add other permissions as needed -->
-    <application ...>
+    <application>
         <!-- Ensure the meta-data tag for Firebase is present -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -15,6 +15,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        ...
+        <!-- Add other application-level configurations here -->
     </application>
 </manifest>
