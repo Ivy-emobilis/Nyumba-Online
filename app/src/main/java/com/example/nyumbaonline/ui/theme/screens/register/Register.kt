@@ -8,15 +8,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Business
-import androidx.compose.material.icons.outlined.Flag
-import androidx.compose.material.icons.outlined.Numbers
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -193,7 +192,7 @@ fun Register(navController: NavController) {
                         },
                         trailingIcon = {
                             Icon(
-                                imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                                imageVector = if (passwordVisible) Icons.Default.Lock else Icons.Default.Lock,
                                 contentDescription = "Toggle password visibility",
                                 modifier = Modifier.clickable { passwordVisible = !passwordVisible },
                                 tint = primaryColor
@@ -226,7 +225,7 @@ fun Register(navController: NavController) {
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Outlined.Business,
+                                imageVector = Icons.Default.AccountCircle,
                                 contentDescription = "Company Icon",
                                 tint = primaryColor
                             )
@@ -257,7 +256,7 @@ fun Register(navController: NavController) {
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Outlined.Flag,
+                                imageVector = Icons.Default.Face,
                                 contentDescription = "Nationality Icon",
                                 tint = primaryColor
                             )
@@ -278,7 +277,7 @@ fun Register(navController: NavController) {
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Outlined.Numbers,
+                                imageVector = Icons.Default.Add,
                                 contentDescription = "ID Icon",
                                 tint = primaryColor
                             )
