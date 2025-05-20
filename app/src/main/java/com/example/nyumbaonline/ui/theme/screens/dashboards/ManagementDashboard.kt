@@ -61,6 +61,7 @@ import com.example.nyumbaonline.navigation.ROUTE_CHAT_ROOM
 import com.example.nyumbaonline.ui.theme.brown
 import com.example.nyumbaonline.ui.theme.saddleBrown
 import kotlinx.coroutines.launch
+import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -214,7 +215,13 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
                 }
                 Card(
                     modifier = Modifier.padding(10.dp).clickable {
-                        navController.navigate(ROUTE_VIEW_PROPERTY)
+                        // Only navigate if management.id is not null or empty
+                        val managementId = management.id
+                        if (!managementId.isNullOrEmpty()) {
+                            navController.navigate("${ROUTE_VIEW_PROPERTY}/$managementId")
+                        } else {
+                            Toast.makeText(context, "Management ID not found. Cannot view properties.", Toast.LENGTH_SHORT).show()
+                        }
                     },
                     shape = RoundedCornerShape(20.dp),
                     elevation = CardDefaults.cardElevation(10.dp),
@@ -324,3 +331,4 @@ fun AddPropertyDialog(
 //fun DashboardScreenPreview(){
 //    ManagementDashboard(rememberNavController())
 //}
+

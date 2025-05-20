@@ -36,20 +36,18 @@ fun AppNavHost(
         }
         composable(ROUTE_REGISTER) { Register(navController) }
         composable(ROUTE_LOGIN) { Login(navController) }
-// ... inside NavHost { ... }
-                composable(ROUTE_VIEW_PROPERTY) {
-                    val management =
-                        navController.previousBackStackEntry?.savedStateHandle?.get<ManagementData>("management")
-                    if (management != null) {
-                        PropertyScreen(navController, managementId = management.id ?: "")
-                    }
-                }
         composable(ROUTE_TENANT_DASHBOARD) {
             val tenant =
                 navController.previousBackStackEntry?.savedStateHandle?.get<TenantModel>("tenant")
             if (tenant != null) {
                 TenantDashboard(navController, tenantViewModel, tenant)
             }
+        }
+        composable(
+            route = "${ROUTE_VIEW_PROPERTY}/{managementId}"
+        ) { backStackEntry ->
+            val managementId = backStackEntry.arguments?.getString("managementId") ?: ""
+            PropertyScreen(navController = navController, managementId = managementId)
         }
         composable(ROUTE_MANAGEMENT_DASHBOARD) {
             val management =
