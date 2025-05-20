@@ -1,5 +1,6 @@
+// File: app/src/main/java/com/example/nyumbaonline/models/TenantModel.kt
 data class TenantModel(
-    val id: String? = null, // Make id nullable
+    val id: String? = null,
     val email: String = "",
     val password: String = "",
     val firstName: String = "",
@@ -9,5 +10,6 @@ data class TenantModel(
     val profilePhotoUrl: String = "",
     val county: String = "",
     val estate: String = "",
-    val houseNumber: String = ""
+    val houseNumber: String = "",
+    val propertyId: String = "" // Add this line
 )

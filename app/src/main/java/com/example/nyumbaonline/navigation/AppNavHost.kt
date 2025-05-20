@@ -127,7 +127,11 @@ fun AppNavHost(
         }
         composable("ViewTenants/{propertyId}") { backStackEntry ->
             val propertyId = backStackEntry.arguments?.getString("propertyId") ?: ""
-            ViewTenants(navController = navController, tenantViewModel = tenantViewModel)
+            ViewTenants(
+                navController = navController,
+                tenantViewModel = tenantViewModel,
+                propertyId = propertyId // Pass propertyId here
+            )
         }
     }
 }
