@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -30,12 +31,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavController
+import com.example.nyumbaonline.data.PropertyViewModel
 import com.example.nyumbaonline.models.ManagementData
+import com.example.nyumbaonline.models.PropertyData
 import com.example.nyumbaonline.navigation.ROUTE_CHAT_ROOM_LIST
 import com.example.nyumbaonline.navigation.ROUTE_VIEW_PROPERTY
 import kotlinx.coroutines.delay
@@ -79,6 +83,17 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
         startY = 0f,
         endY = 1000f
     )
+
+    val showAddPropertyDialog = remember { mutableStateOf(false) }
+    val propertyViewModel = remember { PropertyViewModel() }
+
+    if (showAddPropertyDialog.value) {
+        AddPropertyDialog(
+            managementId = management.id.toString(),
+            onDismiss = { showAddPropertyDialog.value = false },
+            onPropertyAdded = { showAddPropertyDialog.value = false }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -310,7 +325,7 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
                             icon = Icons.Outlined.Add,
                             backgroundColor = dustyRose
                         ) {
-                            Toast.makeText(context, "Add Property Clicked", Toast.LENGTH_SHORT).show()
+                            showAddPropertyDialog.value = true
                         }
 
                         DashboardActionCard(
@@ -656,3 +671,70 @@ fun RecentActivityItem(title: String, description: String, time: String, icon: I
         }
     }
 }
+
+@Composable
+fun AddPropertyDialog(
+    managementId: String,
+    onDismiss: () -> Unit,
+    onPropertyAdded: () -> Unit
+) {
+    val propertyName = remember { mutableStateOf("") }
+    val propertyUnits = remember { mutableStateOf("") }
+    val propertyAddress = remember { mutableStateOf("") }
+    val propertyDescription = remember { mutableStateOf("") }
+    val propertyViewModel = PropertyViewModel() // Use the correct instance
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text("Add New Property") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = propertyName.value,
+                    onValueChange = { propertyName.value = it },
+                    label = { Text("Property Name") }
+                )
+                OutlinedTextField(
+                    value = propertyUnits.value,
+                    onValueChange = { propertyUnits.value = it },
+                    label = { Text("Number of Units") },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = propertyAddress.value,
+                    onValueChange = { propertyAddress.value = it },
+                    label = { Text("Address") }
+                )
+                OutlinedTextField(
+                    value = propertyDescription.value,
+                    onValueChange = { propertyDescription.value = it },
+                    label = { Text("Description") }
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                val property = PropertyData(
+                    name = propertyName.value,
+                    numberOfUnits = propertyUnits.value.toIntOrNull() ?: 0,
+                    address = propertyAddress.value,
+                    description = propertyDescription.value,
+                    managementId = managementId
+                )
+                propertyViewModel.addProperty(
+                    propertyData = property,
+                    onSuccess = { onPropertyAdded() },
+                    onFailure = { /* Handle error */ }
+                )
+            }) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            Button(onClick = { onDismiss() }) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+

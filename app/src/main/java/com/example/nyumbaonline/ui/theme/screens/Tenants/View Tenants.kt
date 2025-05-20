@@ -169,7 +169,7 @@ fun ViewTenants(navController: NavController, tenantViewModel: TenantViewModel, 
                     lastName = lastName,
                     email = email,
                     password = password,
-//                    propertyId = propertyId
+                    propertyId = propertyId
                 )
                 tenantViewModel.addTenant(
                     tenant = newTenant,
