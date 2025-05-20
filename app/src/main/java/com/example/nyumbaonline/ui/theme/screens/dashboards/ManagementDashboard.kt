@@ -1,207 +1,156 @@
 package com.example.nyumbaonline.ui.theme.screens.dashboards
 
 import android.content.Intent
-import android.net.Uri
-
-
-import androidx.compose.foundation.Image
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.nyumbaonline.R
-import com.example.nyumbaonline.data.PropertyViewModel
 import com.example.nyumbaonline.models.ManagementData
-import com.example.nyumbaonline.models.PropertyData
 import com.example.nyumbaonline.navigation.ROUTE_CHAT_ROOM_LIST
 import com.example.nyumbaonline.navigation.ROUTE_VIEW_PROPERTY
-import com.example.nyumbaonline.ui.theme.brown
-import com.example.nyumbaonline.ui.theme.saddleBrown
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import android.widget.Toast
-import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Visibility
+
+// Using the beige and dusty rose color scheme from registration screen
+val beigeBg = Color(0xFFF5F1EC)  // Light beige background
+val dustyRose = Color(0xFF8D6E63) // Primary accent color
+val dustyRoseDark = Color(0xFFC38694) // Darker accent for gradients
+val dustyRoseLight = Color(0xFFF0D9DF) // Lighter accent for backgrounds
+val darkBrown = Color(0xFF47281F)  // For headers and important text
+val mediumBrown = Color(0xFF7D5A50) // For regular text
+val lightBrown = Color(0xFFBDA99F) // For subdued text and icons
+val lightGray = Color(0xFFF7F7F7) // For card backgrounds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManagementDashboard(navController: NavController, management: ManagementData) {
     val selectedItem = remember { mutableStateOf(0) }
     val context = LocalContext.current
-    val showDialog = remember { mutableStateOf(false) }
-    val propertyViewModel: PropertyViewModel = viewModel()
-    val scope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
 
-    // Define theme colors
-    val primaryColor = saddleBrown
-    val secondaryColor = brown
-    val accentColor = Color(0xFF9C27B0) // Purple accent
-    val backgroundColor = Color(0xFFF5F5F5)
-    val cardBackgroundColor = Color.White
+    // Animation states
+    var isLoaded by remember { mutableStateOf(false) }
+    var showStatCards by remember { mutableStateOf(false) }
+    var showActionCards by remember { mutableStateOf(false) }
+
+    // Staggered animations
+    LaunchedEffect(Unit) {
+        isLoaded = true
+        delay(300)
+        showStatCards = true
+        delay(200)
+        showActionCards = true
+    }
+
+    // Background gradient
+    val gradient = Brush.verticalGradient(
+        colors = listOf(dustyRoseLight.copy(alpha = 0.3f), beigeBg),
+        startY = 0f,
+        endY = 1000f
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Nyumba Online",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .size(40.dp)
-                            .background(primaryColor.copy(alpha = 0.1f), CircleShape)
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
+                            modifier = Modifier.size(24.dp),
                             imageVector = Icons.Filled.Home,
-                            contentDescription = "Home",
-                            tint = primaryColor
+                            contentDescription = null,
+                            tint = dustyRose
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Nyumba Online",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = darkBrown,
+                            fontFamily = FontFamily.Serif
                         )
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(40.dp)
-                            .background(primaryColor.copy(alpha = 0.1f), CircleShape)
-                    ) {
+                    IconButton(onClick = { /* To be implemented later */ }) {
                         Icon(
                             imageVector = Icons.Filled.Person,
                             contentDescription = "Profile",
-                            tint = primaryColor
+                            tint = dustyRose
                         )
                     }
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(40.dp)
-                            .background(primaryColor.copy(alpha = 0.1f), CircleShape)
-                    ) {
+                    IconButton(onClick = { /* To be implemented later */ }) {
                         Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search",
-                            tint = primaryColor
-                        )
-                    }
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .size(40.dp)
-                            .background(primaryColor.copy(alpha = 0.1f), CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Logout",
-                            tint = primaryColor
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notifications",
+                            tint = dustyRose
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = cardBackgroundColor,
-                    titleContentColor = primaryColor
+                    containerColor = beigeBg
                 )
             )
         },
         bottomBar = {
             NavigationBar(
-                containerColor = cardBackgroundColor,
-                contentColor = primaryColor,
-                tonalElevation = 8.dp
+                containerColor = Color.White,
+                tonalElevation = 4.dp
             ) {
                 NavigationBarItem(
                     selected = selectedItem.value == 0,
                     onClick = {
                         selectedItem.value = 0
-                        val sendIntent = Intent().apply {
+                        val intent = Intent().apply {
                             action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_TEXT, "Download Nyumba Online: https://www.download.com")
+                            putExtra(Intent.EXTRA_TEXT, "Download Nyumba Online: https://download.com")
                             type = "text/plain"
                         }
-                        val shareIntent = Intent.createChooser(sendIntent, null)
-                        context.startActivity(shareIntent)
+                        context.startActivity(Intent.createChooser(intent, null))
                     },
                     icon = {
                         Icon(
                             Icons.Filled.Share,
                             contentDescription = "Share",
-                            tint = if (selectedItem.value == 0) primaryColor else Color.Gray
+                            tint = if (selectedItem.value == 0) dustyRose else mediumBrown.copy(alpha = 0.6f)
                         )
                     },
                     label = {
                         Text(
-                            text = "Share",
-                            color = if (selectedItem.value == 0) primaryColor else Color.Gray,
-                            fontWeight = if (selectedItem.value == 0) FontWeight.Bold else FontWeight.Normal
+                            "Share",
+                            color = if (selectedItem.value == 0) dustyRose else mediumBrown.copy(alpha = 0.6f),
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily.Serif
                         )
                     }
                 )
@@ -210,7 +159,7 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
                     onClick = {
                         selectedItem.value = 1
                         val intent = Intent(Intent.ACTION_DIAL).apply {
-                            data = "tel: 0700000000".toUri()
+                            data = "tel:0700000000".toUri()
                         }
                         context.startActivity(intent)
                     },
@@ -218,14 +167,15 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
                         Icon(
                             Icons.Filled.Phone,
                             contentDescription = "Phone",
-                            tint = if (selectedItem.value == 1) primaryColor else Color.Gray
+                            tint = if (selectedItem.value == 1) dustyRose else mediumBrown.copy(alpha = 0.6f)
                         )
                     },
                     label = {
                         Text(
-                            text = "Phone",
-                            color = if (selectedItem.value == 1) primaryColor else Color.Gray,
-                            fontWeight = if (selectedItem.value == 1) FontWeight.Bold else FontWeight.Normal
+                            "Phone",
+                            color = if (selectedItem.value == 1) dustyRose else mediumBrown.copy(alpha = 0.6f),
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily.Serif
                         )
                     }
                 )
@@ -235,8 +185,6 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
                         selectedItem.value = 2
                         val intent = Intent(Intent.ACTION_SENDTO).apply {
                             data = "mailto:info@nyumbaonline.com".toUri()
-                            putExtra(Intent.EXTRA_SUBJECT, "Inquiry")
-                            putExtra(Intent.EXTRA_TEXT, "Hello, I would like to meet you. Please help")
                         }
                         context.startActivity(intent)
                     },
@@ -244,454 +192,467 @@ fun ManagementDashboard(navController: NavController, management: ManagementData
                         Icon(
                             Icons.Filled.Email,
                             contentDescription = "Email",
-                            tint = if (selectedItem.value == 2) primaryColor else Color.Gray
+                            tint = if (selectedItem.value == 2) dustyRose else mediumBrown.copy(alpha = 0.6f)
                         )
                     },
                     label = {
                         Text(
-                            text = "Email",
-                            color = if (selectedItem.value == 2) primaryColor else Color.Gray,
-                            fontWeight = if (selectedItem.value == 2) FontWeight.Bold else FontWeight.Normal
+                            "Email",
+                            color = if (selectedItem.value == 2) dustyRose else mediumBrown.copy(alpha = 0.6f),
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily.Serif
                         )
                     }
                 )
             }
-        }
+        },
+        containerColor = beigeBg
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Background Image
-            Image(
-                painter = painterResource(id = R.drawable.background),
-                contentDescription = "background image",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier.fillMaxSize(),
-                alpha = 0.4f // Make the background more subtle
-            )
-
-            // Content
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(gradient)
+                .padding(innerPadding)
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp, bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // User profile card
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(6.dp),
-                    colors = CardDefaults.cardColors(containerColor = cardBackgroundColor)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Profile image placeholder
-                        Box(
-                            modifier = Modifier
-                                .size(60.dp)
-                                .clip(CircleShape)
-                                .background(secondaryColor.copy(alpha = 0.2f))
-                                .border(2.dp, secondaryColor, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Person,
-                                contentDescription = null,
-                                tint = secondaryColor,
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        // User details
-                        Column {
-                            Text(
-                                text = "Welcome, ${management.fullname}",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = primaryColor
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = management.company,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.DarkGray
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = management.email,
-                                fontSize = 14.sp,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                }
-
-                // Action cards section
-                Text(
-                    text = "Management Dashboard",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = primaryColor,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    textAlign = TextAlign.Start
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // Add Property Card
-                    ElevatedCard(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(120.dp)
-                            .clickable { showDialog.value = true },
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(4.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = cardBackgroundColor
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(accentColor.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Add,
-                                    contentDescription = null,
-                                    tint = accentColor
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Add Property",
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 14.sp,
-                                color = accentColor
-                            )
-                        }
-                    }
-
-                    // View Properties Card
-                    ElevatedCard(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(120.dp)
-                            .clickable {
-                                val managementId = management.id
-                                if (!managementId.isNullOrEmpty()) {
-                                    navController.navigate("${ROUTE_VIEW_PROPERTY}/$managementId")
-                                } else {
-                                    Toast.makeText(context, "Management ID not found. Cannot view properties.", Toast.LENGTH_SHORT).show()
-                                }
-                            },
-                        shape = RoundedCornerShape(16.dp),
-                        elevation = CardDefaults.cardElevation(4.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = cardBackgroundColor
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(accentColor.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                   imageVector = Icons.Filled.Visibility,
-                                    contentDescription = null,
-                                    tint = accentColor
-                               )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "View Properties",
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 14.sp,
-                                color = accentColor
-                            )
-                        }
-                    }
-                }
-
-                // View Chatrooms Card
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .clickable {
-                            navController.navigate(ROUTE_CHAT_ROOM_LIST)
-                        },
-                    shape = RoundedCornerShape(16.dp),
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = cardBackgroundColor
+                // Animated welcome profile card
+                AnimatedVisibility(
+                    visible = isLoaded,
+                    enter = fadeIn(
+                        initialAlpha = 0.3f,
+                        animationSpec = tween(durationMillis = 500)
+                    ) + slideInVertically(
+                        initialOffsetY = { -40 },
+                        animationSpec = tween(durationMillis = 500, easing = EaseOutCirc)
                     )
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .clip(CircleShape)
-                                .background(accentColor.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
+                    WelcomeCard(management)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Stats section
+                AnimatedVisibility(
+                    visible = showStatCards,
+                    enter = fadeIn() + slideInVertically(
+                        initialOffsetY = { 40 },
+                        animationSpec = tween(durationMillis = 400)
+                    )
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            text = "Your Dashboard",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = darkBrown,
+                            fontFamily = FontFamily.Serif,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp)
+                        )
+
+                        // Stats row
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.Chat,
-                                contentDescription = null,
-                                tint = accentColor,
-                                modifier = Modifier.size(26.dp)  // Correct syntax
+                            StatCard(
+                                title = "Properties",
+                                value = "5",
+                                icon = Icons.Outlined.Home,
+                                color = dustyRose,
+                                modifier = Modifier.weight(1f)
                             )
+                            StatCard(
+                                title = "Tenants",
+                                value = "12",
+                                icon = Icons.Outlined.Group,
+                                color = mediumBrown,
+                                modifier = Modifier.weight(1f)
+                            )
+                            StatCard(
+                                title = "Inquiries",
+                                value = "3",
+                                icon = Icons.Outlined.Email,
+                                color = dustyRoseDark,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+
+                // Action Cards Section
+                AnimatedVisibility(
+                    visible = showActionCards,
+                    enter = fadeIn() + slideInVertically(
+                        initialOffsetY = { 60 },
+                        animationSpec = tween(durationMillis = 500)
+                    )
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            text = "Quick Actions",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = darkBrown,
+                            fontFamily = FontFamily.Serif,
+                            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+                        )
+
+                        DashboardActionCard(
+                            title = "Add New Property",
+                            description = "List a new property for rent or sale",
+                            icon = Icons.Outlined.Add,
+                            backgroundColor = dustyRose
+                        ) {
+                            Toast.makeText(context, "Add Property Clicked", Toast.LENGTH_SHORT).show()
                         }
 
-                        Column {
-                            Text(
-                                text = "View Chatrooms",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = accentColor
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Communicate with tenants",
-                                fontSize = 14.sp,
-                                color = Color.Gray
-                            )
+                        DashboardActionCard(
+                            title = "View Properties",
+                            description = "Manage your listed properties",
+                            icon = Icons.Outlined.Visibility,
+                            backgroundColor = mediumBrown
+                        ) {
+                            val id = management.id
+                            if (!id.isNullOrEmpty()) navController.navigate("$ROUTE_VIEW_PROPERTY/$id")
                         }
+
+                        DashboardActionCard(
+                            title = "Chat with Tenants",
+                            description = "Message your tenants directly",
+                            icon = Icons.Outlined.Chat,
+                            backgroundColor = dustyRoseDark
+                        ) {
+                            navController.navigate(ROUTE_CHAT_ROOM_LIST)
+                        }
+                    }
+                }
+
+                // Recent activity section
+                AnimatedVisibility(
+                    visible = showActionCards,
+                    enter = fadeIn(
+                        initialAlpha = 0.4f,
+                        animationSpec = tween(durationMillis = 800, delayMillis = 300)
+                    )
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            text = "Recent Activity",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = darkBrown,
+                            fontFamily = FontFamily.Serif,
+                            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
+                        )
+
+                        RecentActivityItem(
+                            title = "New tenant inquiry",
+                            description = "For 2BR Apartment in Westlands",
+                            time = "2 hours ago",
+                            icon = Icons.Outlined.Person
+                        )
+
+                        RecentActivityItem(
+                            title = "Rent payment received",
+                            description = "KSh 45,000 from John Doe",
+                            time = "Yesterday",
+                            icon = Icons.Outlined.Payments
+                        )
+
+                        RecentActivityItem(
+                            title = "Maintenance request",
+                            description = "Plumbing issue in Unit 4B",
+                            time = "2 days ago",
+                            icon = Icons.Outlined.Build
+                        )
                     }
                 }
             }
         }
-    }
-
-    if (showDialog.value) {
-        AddPropertyDialog(
-            managementId = management.id ?: "",
-            onDismiss = { showDialog.value = false },
-            onSave = { propertyData ->
-                scope.launch {
-                    propertyViewModel.addProperty(
-                        propertyData,
-                        onSuccess = {
-                            showDialog.value = false
-                            Toast.makeText(context, "Property added successfully", Toast.LENGTH_SHORT).show()
-                        },
-                        onFailure = {
-                            Toast.makeText(context, "Failed to add property", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
-            },
-            primaryColor = primaryColor,
-            secondaryColor = secondaryColor
-        )
     }
 }
 
 @Composable
-fun AddPropertyDialog(
-    managementId: String,
-    onDismiss: () -> Unit,
-    onSave: (PropertyData) -> Unit,
-    primaryColor: Color,
-    secondaryColor: Color
-) {
-    val pictureUri = remember { mutableStateOf("") }
-    val name = remember { mutableStateOf("") }
-    val numberOfUnits = remember { mutableStateOf("") }
-    val address = remember { mutableStateOf("") }
-    val description = remember { mutableStateOf("") }
+fun WelcomeCard(management: ManagementData) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Profile icon
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(dustyRose, dustyRoseDark)
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = management.fullname.take(1).uppercase(),
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif
+                )
+            }
 
-    Dialog(onDismissRequest = { onDismiss() }) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = Color.White,
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Welcome back,",
+                    fontSize = 14.sp,
+                    color = mediumBrown,
+                    fontFamily = FontFamily.Serif
+                )
+                Text(
+                    text = management.fullname,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = darkBrown,
+                    fontFamily = FontFamily.Serif
+                )
+                Text(
+                    text = management.company,
+                    fontSize = 14.sp,
+                    color = dustyRose,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = FontFamily.Serif
+                )
+            }
+
+            IconButton(
+                onClick = { /* Profile settings */ },
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(beigeBg)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Settings,
+                    contentDescription = "Settings",
+                    tint = dustyRose
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StatCard(title: String, value: String, icon: ImageVector, color: Color, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
+            // Icon
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color.copy(alpha = 0.1f)),
+                contentAlignment = Alignment.Center
             ) {
-                // Dialog Header
-                Text(
-                    text = "Add New Property",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp,
-                    color = primaryColor
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(20.dp)
                 )
-
-                Divider(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    color = primaryColor.copy(alpha = 0.2f)
-                )
-
-                // Form Fields
-                OutlinedTextField(
-                    value = pictureUri.value,
-                    onValueChange = { pictureUri.value = it },
-                    label = { Text("Picture URI") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = primaryColor,
-                        focusedLabelColor = primaryColor,
-                        cursorColor = primaryColor,
-                        unfocusedIndicatorColor = primaryColor.copy(alpha = 0.3f),
-                        unfocusedLabelColor = primaryColor.copy(alpha = 0.7f)
-                    )
-
-//                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        focusedBorderColor = primaryColor,
-//                        focusedLabelColor = primaryColor,
-//                        cursorColor = primaryColor
-//                    )
-                )
-
-                OutlinedTextField(
-                    value = name.value,
-                    onValueChange = { name.value = it },
-                    label = { Text("Property Name") },
-                    modifier = Modifier.fillMaxWidth(),
-//                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        focusedBorderColor = primaryColor,
-//                        focusedLabelColor = primaryColor,
-//                        cursorColor = primaryColor
-//                    )
-                )
-
-                OutlinedTextField(
-                    value = numberOfUnits.value,
-                    onValueChange = { numberOfUnits.value = it },
-                    label = { Text("Number of Units") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = primaryColor,
-                        focusedLabelColor = primaryColor,
-                        cursorColor = primaryColor,
-                        unfocusedIndicatorColor = primaryColor.copy(alpha = 0.3f),
-                        unfocusedLabelColor = primaryColor.copy(alpha = 0.7f)
-                    )
-
-                )
-
-                OutlinedTextField(
-                    value = address.value,
-                    onValueChange = { address.value = it },
-                    label = { Text("Property Address") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = primaryColor,
-                        focusedLabelColor = primaryColor,
-                        cursorColor = primaryColor,
-                        unfocusedIndicatorColor = primaryColor.copy(alpha = 0.3f),
-                        unfocusedLabelColor = primaryColor.copy(alpha = 0.7f)
-                    )
-
-//                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        focusedBorderColor = primaryColor,
-//                        focusedLabelColor = primaryColor,
-//                        cursorColor = primaryColor
-//                    )
-                )
-
-                OutlinedTextField(
-                    value = description.value,
-                    onValueChange = { description.value = it },
-                    label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth(),
-                    minLines = 3,
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = primaryColor,
-                        focusedLabelColor = primaryColor,
-                        cursorColor = primaryColor,
-                        unfocusedIndicatorColor = primaryColor.copy(alpha = 0.3f),
-                        unfocusedLabelColor = primaryColor.copy(alpha = 0.7f)
-                    )
-
-//                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        focusedBorderColor = primaryColor,
-//                        focusedLabelColor = primaryColor,
-//                        cursorColor = primaryColor
-//                    )
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = { onDismiss() },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.LightGray,
-                            contentColor = Color.Black
-                        ),
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Text("Cancel")
-                    }
-
-                    Button(
-                        onClick = {
-                            onSave(
-                                PropertyData(
-                                    pictureUri = pictureUri.value,
-                                    name = name.value,
-                                    numberOfUnits = numberOfUnits.value.toIntOrNull() ?: 0,
-                                    address = address.value,
-                                    description = description.value,
-                                    managementId = managementId
-                                )
-                            )
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = primaryColor,
-                            contentColor = Color.White
-                        )
-                    ) {
-                        Text("Save Property")
-                    }
-                }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Value
+            Text(
+                text = value,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = darkBrown,
+                fontFamily = FontFamily.Serif
+            )
+
+            // Title
+            Text(
+                text = title,
+                fontSize = 12.sp,
+                color = mediumBrown,
+                fontFamily = FontFamily.Serif
+            )
+        }
+    }
+}
+
+@Composable
+fun DashboardActionCard(
+    title: String,
+    description: String,
+    icon: ImageVector,
+    backgroundColor: Color,
+    onClick: () -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.98f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "scale"
+    )
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(scale)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { onClick() },
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp,
+            pressedElevation = 4.dp
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(backgroundColor),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Text content
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
+                    color = darkBrown,
+                    fontFamily = FontFamily.Serif
+                )
+                Text(
+                    text = description,
+                    fontSize = 13.sp,
+                    color = mediumBrown,
+                    fontFamily = FontFamily.Serif,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            // Arrow
+            Icon(
+                imageVector = Icons.Outlined.KeyboardArrowRight,
+                contentDescription = null,
+                tint = dustyRose,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun RecentActivityItem(title: String, description: String, time: String, icon: ImageVector) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Icon
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(dustyRoseLight),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = dustyRose,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Text content
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = darkBrown,
+                    fontFamily = FontFamily.Serif
+                )
+                Text(
+                    text = description,
+                    fontSize = 12.sp,
+                    color = mediumBrown,
+                    fontFamily = FontFamily.Serif
+                )
+            }
+
+            // Time
+            Text(
+                text = time,
+                fontSize = 11.sp,
+                color = mediumBrown,
+                fontFamily = FontFamily.Serif
+            )
         }
     }
 }

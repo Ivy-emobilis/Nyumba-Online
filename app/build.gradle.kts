@@ -74,4 +74,5 @@ dependencies {
     implementation (libs.converter.gson)
     implementation (libs.logging.interceptor)
 //    implementation(libs.androidx.material.icons.extended)
+    implementation( "androidx.compose.material:material-icons-extended:1.6.1")
 }
