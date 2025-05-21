@@ -9,13 +9,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,18 +34,21 @@ val SubTextColor = Color(0xFFA9A9A9) // Gray for subtext
 val CardBackground = Color.White
 val BorderColor = Color(0xFFE0E0E0) // Light border for input fields
 val IconColor = Color(0xFF6D4C41) // Brown for icons
-val PurpleAccent = Color(0xFFB14DB1) // Retain for FAB consistency
+
+// Custom font family for the handwritten style (you may need to add this to your project resources)
+//val HandwrittenFontFamily = FontFamily(
+//    Font(/* Add your handwritten font resource here, e.g., R.font.snell_roundhand */)
+//)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatRoomListScreen(
-    managementId: String,
     onNavigateToChat: (String) -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ChatViewModel = viewModel()
 ) {
     val chatRooms by viewModel.chatRooms.collectAsState()
-    val filteredChatRooms = chatRooms.filter { it.managementId == managementId }
     var showNewChatDialog by remember { mutableStateOf(false) }
 
     // Updated color scheme to match the image
@@ -61,141 +64,140 @@ fun ChatRoomListScreen(
     )
 
     MaterialTheme(colorScheme = customColorScheme) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(BackgroundColor) // Flat background color to match the image
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                // Custom app bar with logo
-                TopBar()
-
-                // Title section
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Chatrooms",
-                        fontSize = 32.sp, // Larger font size to match the image
-                        color = HeadingTextColor,
-                        fontWeight = FontWeight.Normal
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = "Chatrooms",
+                            fontSize = 32.sp,
+                            color = HeadingTextColor,
+                            fontWeight = FontWeight.Normal
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = HeadingTextColor
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = BackgroundColor
                     )
-                    Text(
-                        text = "Communicate with tenants",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontSize = 14.sp,
-                            color = SubTextColor
-                        ),
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                // Chat rooms list
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(filteredChatRooms) { room ->
-                        ChatRoomItem(
-                            chatRoom = room,
-                            onClick = {
-                                viewModel.selectChatRoom(room.id)
-                                onNavigateToChat("${room.id}/true") // Pass readOnly=true
+                )
+            },
+            modifier = modifier.fillMaxSize(),
+            containerColor = BackgroundColor
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    // Logo placeholder (reintroduced from TopBar)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Surface(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            color = CardBackground,
+                            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = "🏠",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = HeadingTextColor
+                                )
                             }
+                        }
+                    }
+
+                    // Title section (subtitle only, as title is now in TopAppBar)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Communicate with tenants",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontSize = 14.sp,
+                                color = SubTextColor
+                            ),
+                            modifier = Modifier.padding(top = 4.dp)
                         )
                     }
+
+                    // Chat rooms list
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(chatRooms) { room ->
+                            ChatRoomItem(
+                                chatRoom = room,
+                                onClick = {
+                                    viewModel.selectChatRoom(room.id)
+                                    onNavigateToChat(room.id)
+                                }
+                            )
+                        }
+                    }
                 }
-            }
 
-            // Bottom navigation bar
-            BottomNavBar(
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
-
-            // Floating action button
-            FloatingActionButton(
-                onClick = { showNewChatDialog = true },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 80.dp, end = 16.dp)
-                    .shadow(4.dp, CircleShape),
-                containerColor = PurpleAccent,
-                contentColor = Color.White
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Create New Chat Room",
-                    tint = Color.White
+                // Bottom navigation bar
+                BottomNavBar(
+                    modifier = Modifier.align(Alignment.BottomCenter)
                 )
-            }
-        }
 
-        // New Chat Room Dialog
-        if (showNewChatDialog) {
-            NewChatRoomDialog(
-                onDismiss = { showNewChatDialog = false },
-                onCreateRoom = { name, description ->
-                    viewModel.createChatRoom(
-                        name = name,
-                        description = description,
-                        participants = listOf("agent1"),
-                        propertyId = "", // Management cannot create property-specific chatrooms here
-                        managementId = managementId
-                    )
-                    showNewChatDialog = false
-                }
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar() {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp), // Increased height to accommodate the logo
-        color = BackgroundColor,
-        shadowElevation = 0.dp
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Logo placeholder (as in the image)
-            Surface(
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                color = CardBackground,
-                border = ButtonDefaults.outlinedButtonBorder.copy(
-                    width = 1.dp
-                )
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center
+                // Floating action button
+                FloatingActionButton(
+                    onClick = { showNewChatDialog = true },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(bottom = 80.dp, end = 16.dp)
+                        .shadow(4.dp, CircleShape),
+                    containerColor = HeadingTextColor,
+                    contentColor = Color.White
                 ) {
-                    Text(
-                        text = "🏠",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = HeadingTextColor
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Create New Chat Room",
+                        tint = Color.White
                     )
                 }
             }
+
+            // New Chat Room Dialog
+            if (showNewChatDialog) {
+                NewChatRoomDialog(
+                    onDismiss = { showNewChatDialog = false },
+                    onCreateRoom = { name, description ->
+                        viewModel.createChatRoom(
+                            name = name,
+                            description = description,
+                            participants = listOf("agent1"),
+                            propertyId = "",
+                            managementId = ""
+                        )
+                        showNewChatDialog = false
+                    }
+                )
+            }
         }
     }
-}
-
-@Composable
-fun WelcomeCard(modifier: Modifier = Modifier) {
-    // Remove the welcome card as it's not present in the image
 }
 
 @Composable
@@ -205,15 +207,12 @@ fun ChatRoomItem(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         onClick = onClick,
-        shape = RoundedCornerShape(8.dp), // Match the rounded corners of the input fields
+        shape = RoundedCornerShape(8.dp),
         color = CardBackground,
-        border = ButtonDefaults.outlinedButtonBorder.copy(
-            width = 1.dp
-        ),
-        shadowElevation = 0.dp // No shadow to match the flat design
+        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp),
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier
@@ -223,18 +222,15 @@ fun ChatRoomItem(
         ) {
             // Chat room avatar
             Surface(
-                modifier = Modifier
-                    .size(40.dp),
+                modifier = Modifier.size(40.dp),
                 shape = CircleShape,
                 color = Color.Transparent
             ) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = "💬",
                         style = MaterialTheme.typography.titleMedium,
-                        color = IconColor // Brown icon color
+                        color = IconColor
                     )
                 }
             }
@@ -242,9 +238,7 @@ fun ChatRoomItem(
             Spacer(modifier = Modifier.width(16.dp))
 
             // Chat room details
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -289,7 +283,7 @@ fun ChatRoomItem(
                     if (chatRoom.unreadCount > 0) {
                         Surface(
                             shape = CircleShape,
-                            color = PurpleAccent,
+                            color = HeadingTextColor,
                             modifier = Modifier.padding(start = 8.dp)
                         ) {
                             Text(
@@ -408,7 +402,7 @@ fun NewChatRoomDialog(
                     }
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = PurpleAccent,
+                    containerColor = HeadingTextColor,
                     contentColor = Color.White
                 ),
                 shape = RoundedCornerShape(12.dp)
@@ -440,15 +434,12 @@ fun BottomNavBar(modifier: Modifier = Modifier) {
         shadowElevation = 8.dp
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Share Button
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "↗",
                     style = MaterialTheme.typography.titleLarge,
@@ -464,9 +455,7 @@ fun BottomNavBar(modifier: Modifier = Modifier) {
             }
 
             // Phone Button
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "📞",
                     style = MaterialTheme.typography.titleLarge,
@@ -482,11 +471,9 @@ fun BottomNavBar(modifier: Modifier = Modifier) {
             }
 
             // Email Button
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "✉️",
+                    text = "✉",
                     style = MaterialTheme.typography.titleLarge,
                     color = IconColor
                 )

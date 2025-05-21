@@ -738,7 +738,7 @@ fun AddPropertyDialog(
                 propertyViewModel.addProperty(
                     propertyData = property,
                     onSuccess = {
-                        onPropertyAdded(property.copy(id = propertyViewModel.generatePropertyId())) // Assuming PropertyViewModel provides a way to get the new ID
+//                        onPropertyAdded(property.copy(id = propertyViewModel.generatePropertyId())) // Assuming PropertyViewModel provides a way to get the new ID
                     },
                     onFailure = { /* Handle error */ }
                 )
